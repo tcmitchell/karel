@@ -1,6 +1,6 @@
 #include	<stdio.h>
 #include	"karel.h"
-#include	"y.tab.h"
+#include	"kparse.h"
 
 /* NPROG is size of program; no one would ever write a program this large */
 #define	NPROG	500

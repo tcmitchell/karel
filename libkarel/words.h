@@ -1,4 +1,4 @@
-#include	"y.tab.h"
+#include	"kparse.h"
 
 /* these lists must be sorted alphabetically in order for the	*/
 /* binary search routine to work				*/
