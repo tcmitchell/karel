@@ -1,4 +1,3 @@
-EXTRA_DIST = karel.1
 SUBDIRS = libkarel doc test curses gtk
 
 dist-hook:
