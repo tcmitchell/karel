@@ -447,7 +447,12 @@ main (int argc, char *argv[])
   the_world = ktr_world_read (wfp);
   close (wfp);
 
-  the_robot = ktr_robot_create(the_world, robot_st, robot_ave, robot_dir, 0);
+  robot_ave = the_world->robot_ave;
+  robot_st = the_world->robot_st;
+  robot_dir = the_world->robot_direction;
+
+  the_robot = ktr_robot_create(the_world, robot_st, robot_ave, robot_dir,
+			       the_world->robot_beepers);
   ktr_robot_set_move_callback(the_robot, handle_robot_move_event);
   ktr_robot_set_turn_callback(the_robot, handle_robot_turn_event);
 
