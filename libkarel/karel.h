@@ -89,6 +89,10 @@ typedef struct ktr_corner ktr_corner_t;
 struct ktr_world {
   int n_streets;
   int n_avenues;
+  int robot_ave;
+  int robot_st;
+  int robot_beepers;
+  ktr_direction_t robot_direction;
   ktr_corner_t ***corners;
 };
 
