@@ -1,3 +1,7 @@
+more robust/flexible world parser/reader (it'll dump core now)
+error checking in ktr_load_program
+common command line args in karelc and karelg
+
 #----------------------------------------------------------------------
 #			      Musts
 #----------------------------------------------------------------------
@@ -18,8 +22,6 @@ GNU coding standards
 
 world events to handle putbeeper/pickbeeper operations
 
-file/on-disk representation of a world
-
 Robot death depiction on collisions (event?)
 
 support for adding new builtin functions
@@ -35,6 +37,8 @@ world editor -- curses
 world editor -- gtk
 
 unify gtk/curses interface to handle X/no-X situations?
+   -- 29-June-2000 if we do this we may end up requiring gtk libs be
+   present to build.  That wouldn't be real nice. 
 
 make yy functions/vars have ktr_ ahead of them for incorporation
 into programs that also use bison/yacc
