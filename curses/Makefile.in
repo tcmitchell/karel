@@ -65,10 +65,10 @@ RANLIB = @RANLIB@
 VERSION = @VERSION@
 YACC = @YACC@
 
-bin_PROGRAMS = cgui
+bin_PROGRAMS = karelc
 
-cgui_SOURCES = cgui.c
-cgui_LDADD = -L../libkarel -lkarel
+karelc_SOURCES = cgui.c
+karelc_LDADD = -L../libkarel -lkarel
 
 INCLUDES = -I../libkarel
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -80,9 +80,9 @@ DEFS = @DEFS@ -I. -I$(srcdir)
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-cgui_OBJECTS =  cgui.o
-cgui_DEPENDENCIES = 
-cgui_LDFLAGS = 
+karelc_OBJECTS =  cgui.o
+karelc_DEPENDENCIES = 
+karelc_LDFLAGS = 
 CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
@@ -95,8 +95,8 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 TAR = gtar
 GZIP_ENV = --best
 DEP_FILES =  .deps/cgui.P
-SOURCES = $(cgui_SOURCES)
-OBJECTS = $(cgui_OBJECTS)
+SOURCES = $(karelc_SOURCES)
+OBJECTS = $(karelc_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
@@ -150,9 +150,9 @@ distclean-compile:
 
 maintainer-clean-compile:
 
-cgui: $(cgui_OBJECTS) $(cgui_DEPENDENCIES)
-	@rm -f cgui
-	$(LINK) $(cgui_LDFLAGS) $(cgui_OBJECTS) $(cgui_LDADD) $(LIBS)
+karelc: $(karelc_OBJECTS) $(karelc_DEPENDENCIES)
+	@rm -f karelc
+	$(LINK) $(karelc_LDFLAGS) $(karelc_OBJECTS) $(karelc_LDADD) $(LIBS)
 
 tags: TAGS
 

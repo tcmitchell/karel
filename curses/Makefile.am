@@ -1,6 +1,6 @@
-bin_PROGRAMS = cgui
+bin_PROGRAMS = karelc
 
-cgui_SOURCES = cgui.c
-cgui_LDADD = -L../libkarel -lkarel
+karelc_SOURCES = cgui.c
+karelc_LDADD = -L../libkarel -lkarel
 
 INCLUDES = -I../libkarel

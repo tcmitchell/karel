@@ -65,11 +65,11 @@ RANLIB = @RANLIB@
 VERSION = @VERSION@
 YACC = @YACC@
 
-bin_PROGRAMS = karel
+bin_PROGRAMS = karelg
 
-karel_SOURCES = karel.c
-karel_LDFLAGS = `gtk-config --libs`
-karel_LDADD = -L../libkarel -lkarel
+karelg_SOURCES = karel.c
+karelg_LDFLAGS = `gtk-config --libs`
+karelg_LDADD = -L../libkarel -lkarel
 
 INCLUDES = `gtk-config --cflags` -I../libkarel
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -81,8 +81,8 @@ DEFS = @DEFS@ -I. -I$(srcdir)
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-karel_OBJECTS =  karel.o
-karel_DEPENDENCIES = 
+karelg_OBJECTS =  karel.o
+karelg_DEPENDENCIES = 
 CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
@@ -95,8 +95,8 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 TAR = gtar
 GZIP_ENV = --best
 DEP_FILES =  .deps/karel.P
-SOURCES = $(karel_SOURCES)
-OBJECTS = $(karel_OBJECTS)
+SOURCES = $(karelg_SOURCES)
+OBJECTS = $(karelg_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
@@ -150,9 +150,9 @@ distclean-compile:
 
 maintainer-clean-compile:
 
-karel: $(karel_OBJECTS) $(karel_DEPENDENCIES)
-	@rm -f karel
-	$(LINK) $(karel_LDFLAGS) $(karel_OBJECTS) $(karel_LDADD) $(LIBS)
+karelg: $(karelg_OBJECTS) $(karelg_DEPENDENCIES)
+	@rm -f karelg
+	$(LINK) $(karelg_LDFLAGS) $(karelg_OBJECTS) $(karelg_LDADD) $(LIBS)
 
 tags: TAGS
 

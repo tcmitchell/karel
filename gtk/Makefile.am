@@ -1,7 +1,7 @@
-bin_PROGRAMS = karel
+bin_PROGRAMS = karelg
 
-karel_SOURCES = karel.c
-karel_LDFLAGS = `gtk-config --libs`
-karel_LDADD = -L../libkarel -lkarel
+karelg_SOURCES = karel.c
+karelg_LDFLAGS = `gtk-config --libs`
+karelg_LDADD = -L../libkarel -lkarel
 
 INCLUDES = `gtk-config --cflags` -I../libkarel
