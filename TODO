@@ -1,3 +1,7 @@
+#----------------------------------------------------------------------
+#			      Musts
+#----------------------------------------------------------------------
+
 GPL in code
 
 good comments using either Doc++ or HeaderDoc.
@@ -8,24 +12,33 @@ error checking in code
 
 GNU coding standards
 
-Robot death depiction on collisions (event?)
+A Texinfo document
+
+
+
+#----------------------------------------------------------------------
+#			      Needs
+#----------------------------------------------------------------------
 
 world events to handle putbeeper/pickbeeper operations
 
 file/on-disk representation of a world
 
-unify gtk/curses interface to handle X/no-X situations?
+Robot death depiction on collisions (event?)
+
+support for adding new builtin functions
+
+
+
+#----------------------------------------------------------------------
+#			      Wishes
+#----------------------------------------------------------------------
 
 world editor -- curses
 
 world editor -- gtk
 
-support for adding new builtin functions
-
-
-#----------------------------------------------------------------------
-#			      Wish List
-#----------------------------------------------------------------------
+unify gtk/curses interface to handle X/no-X situations?
 
 make yy functions/vars have ktr_ ahead of them for incorporation
 into programs that also use bison/yacc
