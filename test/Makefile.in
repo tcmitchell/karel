@@ -71,7 +71,7 @@ ktest_SOURCES = testmain.c
 
 ktest_LDADD = -L../libkarel -lkarel
 
-INCLUDES = -I../libkarel
+INCLUDES = -I$(srcdir)/../libkarel
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_CLEAN_FILES = 
 PROGRAMS =  $(noinst_PROGRAMS)

@@ -690,7 +690,7 @@ fi
 
 
 
-PACKAGE=Karel
+PACKAGE=karel
 
 VERSION=0.1
 

@@ -67,12 +67,15 @@ YACC = @YACC@
 
 lib_LIBRARIES = libkarel.a
 
-libkarel_a_SOURCES = kparse.y kparse.c kparse.h 			engine.c 			fatal.c 			karel.h karelP.h 			klex.c 			memory.c 			nomem.c 			parseerr.c 			robot.c 			symbol.c 			world.c 			yyerror.c
+libkarel_a_SOURCES = kparse.y 			engine.c 			fatal.c 			karel.h karelP.h 			klex.c 			memory.c 			nomem.c 			parseerr.c 			robot.c 			symbol.c 			world.c 			yyerror.c
 
 
 YFLAGS = -d
 
+EXTRA_DIST = kparse.h
+
 AM_CFLAGS = -W -Wall
+
 MAINTAINERCLEANFILES = kparse.h kparse.c
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_CLEAN_FILES = 
@@ -84,8 +87,8 @@ CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 libkarel_a_LIBADD = 
-libkarel_a_OBJECTS =  kparse.o kparse.o engine.o fatal.o klex.o memory.o \
-nomem.o parseerr.o robot.o symbol.o world.o yyerror.o
+libkarel_a_OBJECTS =  kparse.o engine.o fatal.o klex.o memory.o nomem.o \
+parseerr.o robot.o symbol.o world.o yyerror.o
 AR = ar
 CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)

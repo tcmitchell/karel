@@ -1,6 +1,6 @@
 lib_LIBRARIES = libkarel.a
 
-libkarel_a_SOURCES =	kparse.y kparse.c kparse.h \
+libkarel_a_SOURCES =	kparse.y \
 			engine.c \
 			fatal.c \
 			karel.h karelP.h \
@@ -15,5 +15,8 @@ libkarel_a_SOURCES =	kparse.y kparse.c kparse.h \
 
 YFLAGS = -d
 
+EXTRA_DIST = kparse.h
+
 AM_CFLAGS = -W -Wall
+
 MAINTAINERCLEANFILES = kparse.h kparse.c

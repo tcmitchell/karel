@@ -70,7 +70,7 @@ bin_PROGRAMS = karelc
 karelc_SOURCES = cgui.c
 karelc_LDADD = -L../libkarel -lkarel
 
-INCLUDES = -I../libkarel
+INCLUDES = -I$(srcdir)/../libkarel
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_CLEAN_FILES = 
 PROGRAMS =  $(bin_PROGRAMS)

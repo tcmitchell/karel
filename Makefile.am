@@ -1,4 +1,4 @@
-SUBDIRS = libkarel doc test curses gtk
+SUBDIRS = libkarel curses gtk doc test
 
 dist-hook:
 	mkdir $(distdir)/samples
