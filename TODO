@@ -2,8 +2,6 @@
 #			      Musts
 #----------------------------------------------------------------------
 
-GPL in code
-
 good comments using either Doc++ or HeaderDoc.
 
 error checking of karel program instruction return values
@@ -11,8 +9,6 @@ error checking of karel program instruction return values
 error checking in code
 
 GNU coding standards
-
-A Texinfo document
 
 
 
