@@ -1,8 +1,8 @@
 \input texinfo   @c -*-texinfo-*-
 
-@set UPDATED 30 June 2000
-@set EDITION 0.3.4
-@set VERSION 0.3
+@set UPDATED 25 July 2000
+@set EDITION 0.4.0
+@set VERSION 0.4
 
 @c %**start of header
 @c @smallbook
