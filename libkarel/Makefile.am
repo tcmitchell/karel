@@ -1,10 +1,10 @@
 lib_LIBRARIES = libkarel.a
 
-libkarel_a_SOURCES =	engine.c \
+libkarel_a_SOURCES =	kparse.y kparse.c kparse.h \
+			engine.c \
 			fatal.c \
 			karel.h karelP.h \
 			klex.c \
-			kparse.y kparse.h \
 			memory.c \
 			nomem.c \
 			parseerr.c \
