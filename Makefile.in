@@ -83,5 +83,10 @@ y.tab.o: /usr/include/sys/cdefs.h /usr/include/gnu/stubs.h
 y.tab.o: /usr/lib/gcc-lib/i386-redhat-linux/egcs-2.91.66/include/stddef.h
 y.tab.o: /usr/lib/gcc-lib/i386-redhat-linux/egcs-2.91.66/include/stdarg.h
 y.tab.o: /usr/include/bits/types.h /usr/include/libio.h
-y.tab.o: /usr/include/_G_config.h /usr/include/bits/stdio_lim.h karel.h
+y.tab.o: /usr/include/_G_config.h /usr/include/bits/stdio_lim.h
+y.tab.o: /usr/include/stdlib.h /usr/include/sys/types.h /usr/include/time.h
+y.tab.o: /usr/include/endian.h /usr/include/bits/endian.h
+y.tab.o: /usr/include/sys/select.h /usr/include/bits/select.h
+y.tab.o: /usr/include/bits/sigset.h /usr/include/sys/sysmacros.h
+y.tab.o: /usr/include/alloca.h karel.h
 words.o: y.tab.h
