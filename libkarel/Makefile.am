@@ -10,7 +10,6 @@ libkarel_a_SOURCES =	engine.c \
 			nomem.c \
 			robot.c \
 			symbol.c \
-			util.c \
 			world.c
 
 YFLAGS = -d

@@ -86,10 +86,6 @@ extern char yytext[];
  *----------------------------------------------------------------------*/
 
 /*!
- */
-void *emalloc(size_t size);
-
-/*!
  * find s in symbol table
  */
 Symbol *lookup(char *s);

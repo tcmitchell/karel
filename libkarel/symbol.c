@@ -21,8 +21,8 @@ install(char *s)
 {
   Symbol *sp;			/* new symbol table entry */
 
-  sp = (Symbol *) emalloc(sizeof(Symbol));
-  sp->name = emalloc(strlen(s) + 1);
+  sp = (Symbol *) ktr_malloc(sizeof(Symbol));
+  sp->name = (char *) ktr_malloc (strlen(s) + 1);
   strcpy(sp->name, s);
   sp->addr = ktr_lex_get_progp();
   sp->next = symtab;

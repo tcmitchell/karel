@@ -12,7 +12,7 @@ ktr_robot_create_move_event(int old_s, int old_a, int new_s, int new_a)
 {
   ktr_robot_move_event_t *ev;
 
-  ev = (ktr_robot_move_event_t *) emalloc(sizeof(ktr_robot_move_event_t));
+  ev = (ktr_robot_move_event_t *) ktr_malloc(sizeof(ktr_robot_move_event_t));
   ev->old_street = old_s;
   ev->old_avenue = old_a;
   ev->new_street = new_s;
@@ -25,7 +25,7 @@ ktr_robot_create_turn_event(ktr_direction_t old, ktr_direction_t new)
 {
   ktr_robot_turn_event_t *ev;
 
-  ev = (ktr_robot_turn_event_t *) emalloc(sizeof(ktr_robot_turn_event_t));
+  ev = (ktr_robot_turn_event_t *) ktr_malloc (sizeof(ktr_robot_turn_event_t));
   ev->old_direction = old;
   ev->new_direction = new;
   return ev;
@@ -94,7 +94,7 @@ ktr_robot_create(ktr_world_t *world, int street, int avenue,
 {
   ktr_robot_t * robot;
 
-  robot = (ktr_robot_t *) malloc(sizeof(ktr_robot_t));
+  robot = (ktr_robot_t *) ktr_malloc (sizeof (ktr_robot_t));
   robot->street = street;
   robot->avenue = avenue;
   robot->n_beepers = n_beepers;

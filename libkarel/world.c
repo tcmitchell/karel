@@ -10,7 +10,7 @@ ktr_corner_create()
 {
   ktr_corner_t *corner;
 
-  corner = (ktr_corner_t *) malloc(sizeof(ktr_corner_t));
+  corner = (ktr_corner_t *) ktr_malloc(sizeof(ktr_corner_t));
   corner->n_beepers = 0;
   corner->has_wall_north = 0;
   corner->has_wall_east = 0;
@@ -62,13 +62,16 @@ ktr_world_create(int n_streets, int n_avenues)
   ktr_world_t *world;
   int s, a;
 
-  world = (ktr_world_t *) malloc(sizeof(ktr_world_t));
+  world = (ktr_world_t *) ktr_malloc(sizeof(ktr_world_t));
   world->n_streets = n_streets;
   world->n_avenues = n_avenues;
-  world->corners = (ktr_corner_t ***) calloc(n_streets, sizeof(ktr_corner_t *));
+  world->corners
+    = (ktr_corner_t ***) ktr_calloc(n_streets, sizeof(ktr_corner_t **));
+
   for (s=0; s<n_streets; s++)
     {
-      world->corners[s] = (ktr_corner_t **) calloc(n_avenues, sizeof(ktr_corner_t *));
+      world->corners[s]
+	= (ktr_corner_t **) ktr_calloc(n_avenues, sizeof(ktr_corner_t *));
       for (a=0; a<n_avenues; a++)
 	world->corners[s][a] = ktr_corner_create();
     }
