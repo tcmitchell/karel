@@ -43,13 +43,13 @@ egetc(FILE *fp)			/* get a character, checking for EOF */
 void
 skipwhite(void)			/* skip over white space (tabs, etc.) */
 {
-  while (isspace(c))
+  while (isspace((int) c))
     {
       if (c == '\n')
 	{
 	  linecount++;
 	}
-      c = getc(fp);
+      c = (char) getc(fp);
     }
 }
 
@@ -157,9 +157,9 @@ yylex(void)				/* lexical analyzer */
 		skipwhite();
 	}
 	len = 0;
-	while (isalnum(c) || c == '-') {		/* read one word */
+	while (isalnum((int) c) || c == '-') {		/* read one word */
 		yytext[len++] = c;
-		c = getc(fp);
+		c = (char) getc(fp);
 	}
 	yytext[len] = '\0';			/* mark end of word */
 	if (len > 0 && c != EOF) {
