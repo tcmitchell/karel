@@ -14,6 +14,32 @@ static	char	c;			/* character being handled */
 
 static FILE *fp = NULL;
 
+static char
+egetc(FILE *fp)			/* get a character, checking for EOF */
+{
+  char	c;
+
+  if ((c = getc(fp)) == EOF)
+    {
+      severe("unexpected end of program", NULL);
+      return((char) 0);		/* Never executed -- keep gcc happy */
+    }
+  else
+    return(c);
+}
+
+static void
+skipwhite(FILE *fp)		/* skip over white space (tabs, etc.) */
+{
+  while (isspace((int) c))
+    {
+      if (c == '\n')
+	linecount++;
+
+      c = (char) getc(fp);
+    }
+}
+
 void
 initlex(FILE *in_file)			/* prepare the lexical analyzer */
 {
@@ -29,34 +55,6 @@ initlex(FILE *in_file)			/* prepare the lexical analyzer */
   c = ' ';
 
   fp = in_file;
-}
-
-char
-egetc(FILE *fp)			/* get a character, checking for EOF */
-{
-  char	c;
-
-  if ((c = getc(fp)) == EOF)
-    {
-      severe("unexpected end of program", NULL);
-      return((char) 0);		/* Never executed -- keep gcc happy */
-    }
-  else
-    {
-      return(c);
-    }
-}
-
-void
-skipwhite(FILE *fp)		/* skip over white space (tabs, etc.) */
-{
-  while (isspace((int) c))
-    {
-      if (c == '\n')
-	linecount++;
-
-      c = (char) getc(fp);
-    }
 }
 
 int
@@ -150,37 +148,42 @@ getbltinid_orig(char *s) /* find s in built-in array; return -1 if not found */
 int
 yylex(void)				/* lexical analyzer */
 {
-	int	len;				/* length of word	*/
-	int	n;				/* temporary		*/
+  int len;				/* length of word	*/
+  int n;				/* temporary		*/
 
-	skipwhite(fp);
-	while (c == '{') {				/* skip over comment */
-		while (c != '}')
-			c = egetc(fp);
-		c = getc(fp);
-		skipwhite(fp);
+  skipwhite(fp);
+  while (c == '{')
+    {				/* skip over comment */
+      while (c != '}')
+	c = egetc(fp);
+      c = getc(fp);
+      skipwhite(fp);
+    }
+  len = 0;
+  while (isalnum((int) c) || c == '-') 		/* read one word */
+    {
+      yytext[len++] = c;
+      c = (char) getc(fp);
+    }
+  yytext[len] = '\0';			/* mark end of word */
+  if (len > 0 && c != EOF)
+    {
+      tokenid = getkeyid(yytext);
+      if (tokenid >= 0)
+	yyval = keywords[tokenid].keyid;
+      else
+	{
+	  tokenid = getbltinid(yytext);
+	  if (tokenid >= 0)
+	    yyval = bltins[tokenid].type;
+	  else
+	    yyval = sscanf(yytext, "%d", &n) ? NUMBER:NAME;
 	}
-	len = 0;
-	while (isalnum((int) c) || c == '-') {		/* read one word */
-		yytext[len++] = c;
-		c = (char) getc(fp);
-	}
-	yytext[len] = '\0';			/* mark end of word */
-	if (len > 0 && c != EOF) {
-		tokenid = getkeyid(yytext);
-		if (tokenid >= 0)
-			yyval = keywords[tokenid].keyid;
-		else {
-			tokenid = getbltinid(yytext);
-			if (tokenid >= 0)
-				yyval = bltins[tokenid].type;
-			else
-				yyval = sscanf(yytext, "%d", &n) ? NUMBER:NAME;
-		}
-	}
-	else {
-		yyval = c;
-		c = getc(fp);
-	}
-	return(yyval);
+    }
+  else
+    {
+      yyval = c;
+      c = getc(fp);
+    }
+  return(yyval);
 }
