@@ -21,6 +21,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "karel.h"
 
 /*----------------------------------------------------------------------*
@@ -99,11 +100,11 @@ ktr_world_create(int n_streets, int n_avenues)
 
   ktr_world_init(world);
 
-  ktr_world_add_ew_wall(world, 2, 2, 2);
-  ktr_world_add_ns_wall(world, 1, 1, 1);
-  ktr_world_add_ns_wall(world, 1, 2, 2);
-  ktr_world_add_ns_wall(world, 1, 3, 3);
-  ktr_world_add_ns_wall(world, 1, 4, 4);
+/*    ktr_world_add_ew_wall(world, 2, 2, 2); */
+/*    ktr_world_add_ns_wall(world, 1, 1, 1); */
+/*    ktr_world_add_ns_wall(world, 1, 2, 2); */
+/*    ktr_world_add_ns_wall(world, 1, 3, 3); */
+/*    ktr_world_add_ns_wall(world, 1, 4, 4); */
 
   return world;
 }
@@ -193,7 +194,7 @@ ktr_world_check_beeper(ktr_world_t *w, int street, int avenue)
 {
   ktr_corner_t *corner;
   corner = ktr_world_get_corner(w, --street, --avenue);
-  return (corner->n_beepers > 0);
+  return corner->n_beepers;
 }
 
 int
@@ -223,6 +224,100 @@ ktr_world_put_beeper(ktr_world_t *w, int street, int avenue)
   return 0;
 }
 
+/*
+  Reads a world from disk.
+*/
+ktr_world_t *
+ktr_world_read (FILE *fp)
+{
+  ktr_world_t *world = NULL;
+  char buf[BUFSIZ];
+  char *token;
+  int line_num = 1;
+
+  while (fgets (buf, BUFSIZ, fp) != NULL)
+    {
+      token = strtok (buf, " ");
+
+      if (strncasecmp(token, "world", 5) == 0)
+	{
+	  int n_streets, n_avenues;
+	  n_avenues = atoi (strtok (NULL, " "));
+	  n_streets = atoi (strtok (NULL, " "));
+/*  	  printf ("Defined world as %d x %d\n", n_streets, n_avenues); */
+	  world = ktr_world_create(n_streets, n_avenues);
+	}
+      else if (strncasecmp(token, "robot", 5) == 0)
+	{
+	  int st, ave, dir, beepers;
+	  ave = atoi (strtok (NULL, " "));
+	  st = atoi (strtok (NULL, " "));
+	  dir = atoi (strtok (NULL, " "));
+	  beepers = atoi (strtok (NULL, " "));
+/*  	  printf ("Defined robot at %d,%d, facing %d, with %d beepers\n", */
+/*  		  st, ave, dir, beepers); */
+	}
+      else if (strncasecmp(token, "wall", 4) == 0)
+	{
+	  int st, ave, dir;
+	  ave = atoi (strtok (NULL, " "));
+	  st = atoi (strtok (NULL, " "));
+	  dir = atoi (strtok (NULL, " "));
+/*  	  printf ("Defined wall %d of %d,%d\n", dir, st, ave); */
+	  if (world == NULL)
+	    {
+	      fprintf (stderr,
+		       "Commands precede world definition at line %d\n",
+		       line_num);
+	    }
+	  else if (dir == KTR_NORTH)
+	    {
+	      ktr_world_add_ew_wall(world, st, ave, 1);
+	    }
+	  else if (dir == KTR_WEST)
+	    {
+	      ktr_world_add_ns_wall(world, st, ave, 1);
+	    }
+	  else
+	    {
+	      fprintf (stderr, "Unsupported wall command at line %d\n",
+		       line_num);
+	    }
+	}
+      else if (strncasecmp(token, "beepers", 7) == 0)
+	{
+	  int st, ave, n;
+	  ave = atoi (strtok (NULL, " "));
+	  st = atoi (strtok (NULL, " "));
+	  n = atoi (strtok (NULL, " "));
+	  printf ("Defined %d beepers at %d,%d\n", n, st, ave);
+	  if (world == NULL)
+	    {
+	      fprintf (stderr,
+		       "Commands precede world definition at line %d\n",
+		       line_num);
+	    }
+	  else
+	    {
+	      int i;
+	      for (i=0; i<n; i++)
+		ktr_world_put_beeper(world, st, ave);
+	    }
+	}
+      else
+	{
+	  fprintf (stderr, "invalid token \"%s\" at line %d\n",
+		   token, line_num);
+	  if (world != NULL)
+	    ktr_free (world);
+	  return NULL;
+	}
+
+      ++line_num;
+    }
+  return world;
+}
+
 void
 ktr_world_print(ktr_world_t *w)
 {
@@ -242,7 +337,11 @@ ktr_world_print(ktr_world_t *w)
       printf("|");
       for (a=1; a<=w->n_avenues; a++)
 	{
-	  printf("+");
+	  int n_beepers = ktr_world_check_beeper(w, s, a);
+	  if (n_beepers == 0)
+	    printf("+");
+	  else
+	    printf("%d", n_beepers);
 	  if (ktr_world_check_ns_wall(w, s, a))
 	    printf("|");
 	  else

@@ -54,9 +54,13 @@ typedef enum ktr_engine_state ktr_engine_state_t;
 
 /**
    The direction the robot is pointing.
+
+   FIXME
+   Don't change the values, the world definition files depend on them.
+   (boo!, hiss!)  [Let's get rid of this dependency at some point.]
  */
 enum ktr_direction {
-  KTR_NORTH = 247,
+  KTR_NORTH = 1,
   KTR_EAST,
   KTR_SOUTH,
   KTR_WEST
@@ -219,6 +223,11 @@ void *ktr_realloc (void *ptr, size_t size);
  */
 ktr_world_t *
 ktr_world_create(int n_streets, int n_avenues);
+
+/**
+ */
+ktr_world_t *
+ktr_world_read (FILE *fp);
 
 /**
  */
