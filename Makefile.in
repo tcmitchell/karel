@@ -345,6 +345,7 @@ maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 dist-hook:
 	mkdir $(distdir)/samples
 	cp -p $(srcdir)/samples/*.k $(distdir)/samples
+	cp -p $(srcdir)/samples/*.wld $(distdir)/samples
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
