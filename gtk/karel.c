@@ -23,8 +23,6 @@
 #include <math.h>
 #include <sys/poll.h>
 #include <gtk/gtk.h>
-#include <robot.h>
-#include <world.h>
 #include <karel.h>
 
 typedef enum {
