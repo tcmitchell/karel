@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <signal.h>
 #include "karel.h"
 #include "karelP.h"
 
@@ -55,14 +54,4 @@ yyerror(char *s)				/* handle parser error */
       fprintf(stderr, " near %s", yytext);
     }
   fputc('\n', stderr);
-}
-
-void
-interrupt(int arg)				/* handle interupts, die */
-{
-  arg = arg;			/* Keep gcc happy */
-  signal(SIGINT, SIG_IGN);
-/*    finish(); */
-  fprintf(stderr, "interupt\n");
-  exit(0);
 }

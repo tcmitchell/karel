@@ -70,6 +70,8 @@ libkarel_a_SOURCES = code.c 			error.c error.h 			karel.h karelP.h 			klex.c 			
 
 
 YFLAGS = -d
+
+AM_CFLAGS = -W -Wall
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_CLEAN_FILES = 
 LIBRARIES =  $(lib_LIBRARIES)

@@ -11,3 +11,5 @@ libkarel_a_SOURCES =	code.c \
 			world.c
 
 YFLAGS = -d
+
+AM_CFLAGS = -W -Wall

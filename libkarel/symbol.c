@@ -1,6 +1,5 @@
 #include "karel.h"
 #include "karelP.h"
-#include "util.h"
 
 static	Symbol	*symtab = 0;	/* the symbol table */
 

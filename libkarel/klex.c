@@ -129,7 +129,8 @@ getkeyid(char *s)	/* find s in keyword array; return -1 if not found */
 int
 getkeyid_orig(char *s)	/* find s in keyword array; return -1 if not found */
 {
-  int	cmp, lower, upper, guess, found;
+  int guess = 0;
+  int cmp, lower, upper, found;
 
   /* use a binary search */
   found = lower = 0;
@@ -176,7 +177,8 @@ getbltinid(char *s)	/* find s in keyword array; return -1 if not found */
 int
 getbltinid_orig(char *s) /* find s in built-in array; return -1 if not found */
 {
-  int	cmp, lower, upper, guess, found;
+  int guess = 0;
+  int cmp, lower, upper, found;
 
   /* use a binary search */
   found = lower = 0;

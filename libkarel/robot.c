@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include "karel.h"
 #include "karelP.h"
-#include "util.h"
 
 /*----------------------------------------------------------------------*
  *			   Private Functions                            *

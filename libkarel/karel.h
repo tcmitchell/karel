@@ -4,6 +4,17 @@
 #include <stdio.h>		/* for FILE* in initlex */
 
 /*!
+  @header Karel
+  This is the public API for libkarel.
+*/
+
+/*----------------------------------------------------------------------*
+			       Typedefs
+ *----------------------------------------------------------------------*/
+
+/*!
+  @typedef k_direction_t
+  @discussion The direction the robot is pointing.
  */
 typedef enum {
   K_NORTH = 247,
@@ -12,11 +23,8 @@ typedef enum {
   K_WEST
 } k_direction_t;
 
-/*----------------------------------------------------------------------*
- *			Structure Definitions                           *
- *----------------------------------------------------------------------*/
-
 /*!
+  @typedef k_corner_t
  */
 typedef struct corner {
   int n_beepers;
@@ -27,6 +35,7 @@ typedef struct corner {
 } k_corner_t;
 
 /*!
+  @typedef k_world_t
  */
 typedef struct world {
   int n_streets;
@@ -35,6 +44,7 @@ typedef struct world {
 } k_world_t;
 
 /*!
+  @typedef k_robot_move_event_t
  */
 typedef struct k_robot_move_event {
   int old_street;
@@ -44,6 +54,7 @@ typedef struct k_robot_move_event {
 } k_robot_move_event_t;
 
 /*!
+  @typedef k_robot_turn_event_t
  */
 typedef struct k_robot_turn_event {
   k_direction_t old_direction;
@@ -51,11 +62,17 @@ typedef struct k_robot_turn_event {
 } k_robot_turn_event_t;
 
 /*!
+  @typedef k_robot_move_callback_t
  */
 typedef	void (*k_robot_move_callback_t)(k_robot_move_event_t *);
+
+/*!
+  @typedef k_robot_turn_callback_t
+*/
 typedef	void (*k_robot_turn_callback_t)(k_robot_turn_event_t *);
 
 /*!
+  @typedef k_robot_t
  */
 typedef struct k_robot {
   int street;
@@ -73,8 +90,6 @@ typedef struct k_robot {
 
 /* We need to lose this from the public API! --tcm 27-Apr-2000 */
 
-/*!
- */
 extern int startaddr;
 
 /*----------------------------------------------------------------------*
@@ -126,6 +141,7 @@ void
 k_robot_set_turn_callback(k_robot_t *r, k_robot_turn_callback_t cb);
 
 /*!
+  @function k_robot_get_pos
  */
 void k_robot_get_pos(k_robot_t *r, int *street, int *avenue);
 

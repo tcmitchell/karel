@@ -1,6 +1,6 @@
 #include <stdlib.h>
-#include "error.h"
-#include "util.h"
+#include "karel.h"
+#include "karelP.h"
 
 
 /* do malloc with error checking */

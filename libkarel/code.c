@@ -63,10 +63,8 @@ execute(k_robot_t *r, int n)		/* execute machine */
 
   temp = pc;
   for (pc = n; (prog[pc] != RETURN) && vm_state; pc++)
-    {
-      flag = (*(prog[pc]))(r);
-/*        update(); */   /* Was for curses.  Decouple! */
-    }
+    flag = (*(prog[pc]))(r);
+
   pc = temp;
   return 0;
 }
