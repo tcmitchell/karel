@@ -1,7 +1,8 @@
 \input texinfo   @c -*-texinfo-*-
 
-@set UPDATED 5 May 2000
-@set VERSION 0.1
+@set UPDATED 27 June 2000
+@set EDITION 0.3.3
+@set VERSION 0.3
 
 @c %**start of header
 @c @smallbook
@@ -13,6 +14,10 @@
 @setchapternewpage odd
 
 @ifinfo
+@c !! set edition, date, version
+This is Edition @value{EDITION}, @value{UPDATED},
+of the @cite{Karel Manual} for karel Version @value{VERSION}
+
 This file documents Karel, a robot simulator/interpreter.
 
 Copyright (C) 2000 Tom Mitchell
@@ -43,7 +48,8 @@ by the Free Software Foundation.
 @titlepage
 @title Karel
 @subtitle A Robot Interpreter
-@subtitle Version @value{VERSION}
+@subtitle Edition @value{EDITION}, for karel version @value{VERSION}
+@subtitle @value{UPDATED}
 @author Tom Mitchell
 @author tmitchel@@users.sourceforge.net
 
@@ -70,24 +76,28 @@ by the Free Software Foundation.
 @node    Top, Introduction, (dir), (dir)
 @comment node-name, next,          previous, up
 
+@ifinfo
+This is Edition @value{VERSION}, @value{UPDATED},
+of the @cite{Karel Manual} for karel Version @value{VERSION}
+@end ifinfo
+
 @menu
 * Introduction::                About Karel
 
-* The Karel Language::          
-* Extending Karel::             
+* Karel Users Guide::           
+* Karel Programmers Guide::     
 * Index::                       
 @end menu
 
-@node    Introduction, The Karel Language, Top, Top
+@node    Introduction, Karel Users Guide, Top, Top
 @comment node-name,     next,          previous, up
 @chapter Introduction
 
 @menu
 * Learning to Program::         
 * Karel::                       
-* Sample Karel Program::        
-* Running the Karel Simulator::  
 * Things to do::                
+* How to use this manual::      
 * Acknowledgements::            
 @end menu
 
@@ -95,7 +105,7 @@ by the Free Software Foundation.
 @comment  node-name,  next,  previous,  up
 @section Learning to Program
 
-My first college computer class, in the fall of 1982 used
+My first college computer class, in the fall of 1982, used
 @cite{Karel the Robot} as the introduction to programming in Pascal.  I
 found it an entertaining and useful introduction to structured
 programming.  While structured programming has fallen out of favor in
@@ -104,15 +114,16 @@ useful introduction to computer programming.  And I think that children
 are entertained by the idea of instructing a robot to perform a task,
 and then watching the robot actually follow the instructions.
 
-
-@node Karel, Sample Karel Program, Learning to Program, Introduction
+@node Karel, Things to do, Learning to Program, Introduction
 @section Karel
 
 This document is light on the details of the Karel language.  The
 definitive reference is Richard Pattis' @cite{Karel The Robot: A Gentle
-Introduction to The Art of Programming}.  What this document attempts to
-describe is the Karel simulator, which loads and executes Karel
-programs.
+Introduction to The Art of Programming}@footnote{Pattis, Richard E., Jim
+Roberts, and Mark Stehlik. @cite{Karel the Robot: A Gentle Introduction
+to The Art of Programming}. City, State: John Wiley & Sons, 1994.  ISBN:
+0471597252}.  What this document attempts to describe is the Karel
+simulator, which loads and executes Karel programs.
 
 There are three user interfaces that come with the Karel package: text,
 curses, and gtk.  The text interface prints out a line whenever Karel
@@ -125,59 +136,34 @@ GTK development headers and libraries.
 The architecture of the Karel package is such that developers can build
 their own user interfaces using virtually any toolkit they desire.  All
 they need is a C interface to interact with the Karel engine.  Karel was
-written this way to avoid being tied to any particular GUI toolkit.
-There is a lot of religion in the choice among GUI toolkits, and I set
-the goal of being somewhat independent.  I expect it to be possible to
+written this way to avoid being tied to any particular GUI toolkit.  The
+choice of GUI toolkits is largely personal preference; I set the goal of
+being relatively toolkit independent.  I expect it to be possible to
 build user interfaces to the Karel environment in Qt, Motif/Lesstif,
 Athena, Tcl/Tk, Java, perl, guile, or any other system that has a C
 callout mechanism.
 
-
-@node Sample Karel Program, Running the Karel Simulator, Karel, Introduction
-@section Sample Karel Program
-
-This is a very simple Karel program, although not the simplest of all.
-This program causes Karel to move forward one intersection in the
-direction he is facing.  Then Karel is turned off and the program ends.
-The simplest correct Karel program would not have the move statement,
-Karel would simply be turned off.  Note that in this version of Karel,
-@cindex @{ comment character
-@cindex @} comment character
-the '@{' and '@}' are used for comments, just like Pascal.
-
-@example
-@group
-
-@{ about the simplest karel program you can have @}
-
-BEGINNING-OF-PROGRAM
-  BEGINNING-OF-EXECUTION
-    move;
-    turnoff
-  END-OF-EXECUTION
-END-OF-PROGRAM
-
-@end group
-@end example
-
-
-@node Running the Karel Simulator, Things to do, Sample Karel Program, Introduction
-@section Running the Karel Simulator
-
-
-@node Things to do, Acknowledgements, Running the Karel Simulator, Introduction
+@node Things to do, How to use this manual, Karel, Introduction
 @section Things to do
 
 @enumerate
 @item
-Save and read world description files
+Save and load world description files
 
 @item
-debugger/code stepper
+Debugger/code stepper
 @end enumerate
 
+@node How to use this manual, Acknowledgements, Things to do, Introduction
+@section How to use this manual
 
-@node Acknowledgements,  , Things to do, Introduction
+This manual is divided into 2 sections, a User's Guide and a
+Programmer's Guide.  If you want to write Karel programs and run them,
+you'll want to read the User's Guide.  If you want to extend the Karel
+environment, or you are curious about the inner workings of the
+environment, you will find the Programmer's Guide helpful.
+
+@node Acknowledgements,  , How to use this manual, Introduction
 @comment  node-name,  next,  previous,  up
 @section Acknowledgements
 @cindex Miksovsky, Jan
@@ -199,12 +185,204 @@ Jan's code, but the concepts behind the simulator, and particularly the
 engine that builds and executes a Karel program, are Jan's, and I
 probably couldn't have written this system without his lead to follow.
 
+@c ----------------------------------------------------------------------
+@c
+@c User's Guide
+@c
+@c ----------------------------------------------------------------------
 
+@node Karel Users Guide, Karel Programmers Guide, Introduction, Top
+@chapter Karel User's Guide
 
+@menu
+* Invoking::                    
+* Writing Karel Programs::      
+* Karel Language Reference::    
+@end menu
 
+@node Invoking, Writing Karel Programs, Karel Users Guide, Karel Users Guide
+@section Invoking the Karel Simulator
 
-@node The Karel Language, Extending Karel, Introduction, Top
-@chapter The Karel Language
+@menu
+* Curses Interface::            
+* X Interface::                 
+@end menu
+
+A Karel simulator is a program that ties the Karel execution engine to a
+user interface.  The execution engine is responsible for running the
+karel program and moving Karel around his world.  The user interface is
+responsible for displaying the state of the world and the robot to the
+user.  The karel distribution comes with two such simulators: a terminal
+based interface and an X Window System based interface.
+
+The current version of the karel software is not able to load a world
+from a file.  The world is currently defined programmatically within the
+simulator programs.  In a future release (real soon now), the core karel
+library will have the ability to read and write world files.
+
+@node Curses Interface, X Interface, Invoking, Invoking
+@subsection Invoking in a terminal
+
+@code{karelc} is a simulator written with the curses user interface.  To
+run the samples/maze.k Karel program in the @code{karelc} simulator:
+
+@code{karelc samples/maze.k}
+
+@node X Interface,  , Curses Interface, Invoking
+@subsection Invoking under X Windows
+
+@code{karelg} is a simulator written with an X Window System GTK user
+interface.  To run the samples/maze.k Karel program in the @code{karelg}
+simulator:
+
+@code{karelg samples/maze.k}
+
+The X Window System front end is based on the Gimp ToolKit.  The choice
+of X toolkits is largely personal preference.  GTK was chosen because of
+its LGPL license.  The core of the Karel Simulator, the execution
+engine, is independent of any user interface.  It should be easy to
+create a new user interface for Karel with a different X toolkit.  This
+was one of the goals for the Karel Architecture.
+
+@node Writing Karel Programs, Karel Language Reference, Invoking, Karel Users Guide
+@section Writing Karel Programs
+
+@menu
+* A Simple Program::            
+* Sample Program 2::            
+* Turning Right::               
+* Maze Program::                
+@end menu
+
+The definitive source of Karel information is Richard Pattis' book
+@cite{Karel the Robot: A Gentle Introduction to The Art of Programming}.
+This section is intended to be a brief overview of the language in order
+to get started using Karel.
+
+@node A Simple Program, Sample Program 2, Writing Karel Programs, Writing Karel Programs
+@subsection A Simple Program
+
+This is the simplest correct Karel program.  All valid Karel programs
+must minimally have these 5 lines.
+
+@example
+@cartouche
+BEGINNING-OF-PROGRAM
+  BEGINNING-OF-EXECUTION
+    turnoff
+  END-OF-EXECUTION
+END-OF-PROGRAM
+@end cartouche
+@end example
+
+This program does nothing but turn Karel off.  It is a good sample
+because it concisely shows the structure of a valid Karel program.
+
+@node Sample Program 2, Turning Right, A Simple Program, Writing Karel Programs
+@subsection Sample Karel Program 2
+
+By adding calls to the @code{move} and @code{turnleft} primitives, this
+program causes Karel to walk a square, returning to his starting point.
+Note that in this version of Karel, the
+@cindex @{ comment character
+@cindex @} comment character
+'@{' and '@}' are used for comments, just like Pascal.
+
+@example
+@cartouche
+@r{@{ A simple karel program to walk in a square to the left @}}
+
+BEGINNING-OF-PROGRAM
+  BEGINNING-OF-EXECUTION
+    move;
+    turnleft;
+    move;
+    turnleft;
+    move;
+    turnleft;
+    move;
+    turnleft;
+    turnoff
+  END-OF-EXECUTION
+END-OF-PROGRAM
+@end cartouche
+@end example
+
+@node Turning Right, Maze Program, Sample Program 2, Writing Karel Programs
+@subsection Turning Right
+
+The Karel language has a @code{turnleft} primitive, but lacks a
+@code{turnright} primitive.  One of the first instructions a new Karel
+programmer does is define the @code{turnright} instruction for Karel.
+As the old adage goes, "two wrongs don't make a right, but three lefts
+do".
+
+The following example demonstrates how to define a new instruction for
+Karel out of the existing primitives.  This example will cause Karel to
+walk in a square to the right, instead of the left as in the previous
+example.
+
+@example
+@cartouche
+@r{@{ A simple karel program to walk in a square to the right @}}
+
+BEGINNING-OF-PROGRAM
+
+  DEFINE-NEW-INSTRUCTION turnright AS
+    ITERATE 3 TIMES
+      turnleft;
+
+  BEGINNING-OF-EXECUTION
+    move;
+    turnright;
+    move;
+    turnright;
+    move;
+    turnright;
+    move;
+    turnright;
+    turnoff
+  END-OF-EXECUTION
+
+END-OF-PROGRAM
+@end cartouche
+@end example
+
+@node Maze Program,  , Turning Right, Writing Karel Programs
+@subsection Solving a Maze
+
+Programs can be constructed for Karel that will allow him to find a
+beeper by navigating through a maze.  This sample program has Karel
+follow walls looking for openings until he locates a beeper.  You can
+find this program in the distribution in file @file{samples/maze.k}.
+
+@example
+@cartouche
+@r{@{ karel follows the right wall until a beeper is found@}}
+
+BEGINNING-OF-PROGRAM
+  DEFINE-NEW-INSTRUCTION turnright AS
+    ITERATE 3 TIMES
+      turnleft;
+
+  BEGINNING-OF-EXECUTION
+    WHILE not-next-to-a-beeper DO
+      BEGIN
+        IF right-is-clear
+          THEN turnright
+          ELSE
+            WHILE front-is-blocked DO
+              turnleft;
+        move
+      END;
+    turnoff
+  END-OF-EXECUTION
+END-OF-PROGRAM
+@end cartouche
+@end example
+
+@node Karel Language Reference,  , Writing Karel Programs, Karel Users Guide
+@section Karel Language Reference
 
 @menu
 * Primitives::                  
@@ -213,8 +391,8 @@ probably couldn't have written this system without his lead to follow.
 * Defining Procedures::         
 @end menu
 
-@node Primitives, Tests, The Karel Language, The Karel Language
-@section Primitives
+@node Primitives, Tests, Karel Language Reference, Karel Language Reference
+@subsection Primitives
 
 @deffn Built-in move
 Move Karel one intersection forward.
@@ -236,8 +414,8 @@ Take a beeper from the beeper bag and put it at the current intersection.
 Turn Karel off.
 @end deffn
 
-@node Tests, Control Structures, Primitives, The Karel Language
-@section Tests
+@node Tests, Control Structures, Primitives, Karel Language Reference
+@subsection Tests
 
 @deffn Test front-is-clear
 True if there is no wall directly in front of Karel.  False if there is.
@@ -315,10 +493,8 @@ True if Karel's beeper bag is empty.  False if there is at least one
 beeper in the beeper bag.
 @end deffn
 
-
-
-@node Control Structures, Defining Procedures, Tests, The Karel Language
-@section Control Structures
+@node Control Structures, Defining Procedures, Tests, Karel Language Reference
+@subsection Control Structures
 
 @example
 @group
@@ -357,8 +533,8 @@ END-OF-PROGRAM
 @end example
 
 
-@node Defining Procedures,  , Control Structures, The Karel Language
-@section Defining Procedures
+@node Defining Procedures,  , Control Structures, Karel Language Reference
+@subsection Defining Procedures
 
 @example
 @group
@@ -367,59 +543,85 @@ END-OF-PROGRAM
 @end group
 @end example
 
+@c ----------------------------------------------------------------------
+@c
+@c Programmer's Guide
+@c
+@c ----------------------------------------------------------------------
 
-
-
-@node Extending Karel, Index, The Karel Language, Top
-@chapter Extending Karel
+@node Karel Programmers Guide, Index, Karel Users Guide, Top
+@chapter Karel Programmer's Guide
 
 @menu
+* Architecture::                
 * Building applications::       
-* Error handlers::              
-* Memory Management::           
+* Extending Karel::             
+* API::                         
+@end menu
+
+@node Architecture, Building applications, Karel Programmers Guide, Karel Programmers Guide
+@section The Karel Simulator Architecture
+
+@node Building applications, Extending Karel, Architecture, Karel Programmers Guide
+@section Building applications
+
+@node Extending Karel, API, Building applications, Karel Programmers Guide
+@section Extending Karel
+
+@node API,  , Extending Karel, Karel Programmers Guide
+@section API Reference
+
+@menu
+* Error API::                   
+* Memory API::                  
 * Robot API::                   
 * World API::                   
 * Engine API::                  
 @end menu
 
-@node Building applications, Error handlers, Extending Karel, Extending Karel
-@section Building applications
+@node Error API, Memory API, API, API
+@subsection Error API
 
-@node Error handlers, Memory Management, Building applications, Extending Karel
-@section Error handlers
+You can override the default error handling routines by defining
+replacements and including them in the link command prior to libkarel.
+Each error handler is defined separately, so it is possible to redefine
+one, and use the default behavior of the other two.
 
 @deftypefn {Error Handler} void ktr_err_nomem (size_t @var{size})
 Library function that is invoked when the Karel engine cannot allocate
-memory.  You can define your own no memory handler by defining your own
-error handlers and including them in the link command prior to libkarel.
+memory.
 @end deftypefn
 
 @deftypefn {Error Handler} void ktr_err_fatal (char * @var{format}, @var{...})
 Library function that is invoked when the Karel engine has a fatal
 error.  The default implementation prints the arguments ala
-fprintf(stderr, @var{format}, @var{...}) and exits the program.  You can
-define your own fatal error handler by defining your own error handlers
-and including them in the link command prior to libkarel.
+@code{fprintf(stderr}, @var{format}, @var{...}@code{)} and exits the
+program.
 @end deftypefn
 
 @deftypefn {Error Handler} void ktr_err_parse (char * @var{format}, @var{...})
 Library function that is invoked when the Karel parser has an error.
-The default implementation prints the arguments ala fprintf(stderr,
-@var{format}, @var{...}) and exits the program.  You can define your own
-parse error handler by defining your own error handlers and including
-them in the link command prior to libkarel.
+The default implementation prints the arguments ala
+@code{fprintf(stderr}, @var{format}, @var{...}@code{)} and exits the
+program.
 @end deftypefn
 
+@node Memory API, Robot API, Error API, API
+@subsection Memory API
 
+You can override the default memory management routines by defining
+replacements and including them in the link command prior to libkarel.
+If you do decide to override the memory management routines, they must
+all be redefined.  It is not possible to redefine some memory management
+routines and not others.
 
-@node Memory Management, Robot API, Error handlers, Extending Karel
-@section Memory Management
+The default implementation uses the standard C library calls
+@code{calloc}, @code{malloc}, @code{free}, and @code{realloc}.
 
 @deftypefn {Memory Management} {void *} ktr_calloc (size_t @var{nmemb}, size_t @var{size})
 Allocates an array of @var{nmemb} elements, each of @var{size} bytes.
-Returns a pointer to the allocated memory, or NULL if the allocaiton failed.
+Returns a pointer to the allocated memory, or NULL if the allocation failed.
 @end deftypefn
-
 
 @deftypefn {Memory Management} {void *} ktr_malloc (size_t @var{size})
 Allocates @var{size} bytes.  Returns a pointer to the allocated memory,
@@ -427,25 +629,23 @@ or NULL if the allocaiton failed.
 @end deftypefn
 
 @deftypefn {Memory Management} void ktr_free (void *@var{ptr});
-Frees memory previously allocated by @var{ktr_calloc}, @var{ktr_malloc},
-or @var{ktr_realloc}.
+Frees memory previously allocated by @code{ktr_calloc}, @code{ktr_malloc},
+or @code{ktr_realloc}.
 @end deftypefn
 
 @deftypefn {Memory Management} {void *} ktr_realloc (void *@var{ptr}, size_t @var{size});
 Attempts to resize the memory block pointed to by @var{ptr}.  If
-@var{ptr} is NULL, the call is equivalent to @var{malloc(size)}.  If
-@var{size} is equal to zero, the call is equivalent to @var{free(ptr)}.
-Unless @var{ptr} is NULL, it must have been allocated by a previous call
-to @var{ktr_calloc} or @var{ktr_malloc}.  Returns a pointer to the new
+@var{ptr} is NULL, the call is equivalent to
+@code{malloc(}@var{size}@code{)}.  If @var{size} is equal to zero, the
+call is equivalent to @code{free(}@var{ptr}@code{)}.  Unless @var{ptr}
+is NULL, it must have been allocated by a previous call to
+@code{ktr_calloc} or @code{ktr_malloc}.  Returns a pointer to the new
 block of memory.  If the allocation fails, NULL is returned and the
 original block of memory is untouched.
 @end deftypefn
 
-
-
-
-@node Robot API, World API, Memory Management, Extending Karel
-@section Robot API
+@node Robot API, World API, Memory API, API
+@subsection Robot API
 
 @deftp Robot ktr_robot_t
 The robot data type.
@@ -461,29 +661,22 @@ robot starts with @var{n_beepers} in his beeper bag.
 Establishes the function to invoke whenever karel moves.
 @end deftypefn
 
-
 @deftypefn Robot {void} ktr_robot_set_turn_callback (ktr_robot_t *@var{r}, ktr_robot_turn_callback_t @var{cb})
 Establishes the function to invoke whenever karel turns.
 @end deftypefn
-
 
 @deftypefn Robot {void} ktr_robot_get_pos (ktr_robot_t *@var{r}, int *@var{street}, int *@var{avenue});
 Sets @var{street} and @var{avenue} to the coordinates of the given
 robot's (@var{r}) current intersection.
 @end deftypefn
 
-
 @deftypefn Robot {char *} ktr_robot_dir_to_string (ktr_direction_t @var{dir});
 Converts the given direction (@var{dir}) to a string for printing the
 robot's current direction.
 @end deftypefn
 
-
-
-
-
-@node World API, Engine API, Robot API, Extending Karel
-@section World API
+@node World API, Engine API, Robot API, API
+@subsection World API
 
 @deftp World ktr_world_t
 The world data type.
@@ -510,18 +703,15 @@ Returns 1 if there is an east-west wall immediately north of street
 @var{north_of_street} at avenue @var{at_avenue}.  Returns 0 otherwise.
 @end deftypefn
 
-
 @deftypefn World int ktr_world_check_ns_wall (ktr_world_t *@var{w}, int @var{at_street}, int @var{east_of_avenue})
 Returns 1 if there is an north-south wall immediately east of avenue
 @var{east_of_avenue} at street @var{at_street}.  Returns 0 otherwise.
 @end deftypefn
 
-
 @deftypefn World int ktr_world_check_beeper (ktr_world_t *@var{w}, int @var{street}, int @var{avenue})
 Returns 1 if there is a beeper at intersection
 (@var{street},@var{avenue}).  Returns 0 otherwise.
 @end deftypefn
-
 
 @deftypefn World int ktr_world_pick_beeper (ktr_world_t *@var{w}, int @var{street}, int @var{avenue})
 Decrements the number of beepers at intersection
@@ -529,17 +719,13 @@ Decrements the number of beepers at intersection
 picked.  Returns -1 if there were no beepers to pick up.
 @end deftypefn
 
-
 @deftypefn World int ktr_world_put_beeper (ktr_world_t *@var{w}, int @var{street}, int @var{avenue})
 Increments the number of beepers at intersection
 (@var{street},@var{avenue}).  Returns 0.
 @end deftypefn
 
-
-
-
-@node Engine API,  , World API, Extending Karel
-@section Engine API
+@node Engine API,  , World API, API
+@subsection Engine API
 
 @deftypefn Engine {ktr_engine_t *} ktr_load_program (FILE *@var{in_file});
 Loads the karel program in the open file @var{in_file}.  Returns the
@@ -547,12 +733,18 @@ resulting engine.  Errors are presently undetected.  This obviously
 needs work!
 @end deftypefn
 
+@c ----------------------------------------------------------------------
+@c
+@c Index
+@c
+@c ----------------------------------------------------------------------
+
 @c @node    Function Index, Concept Index, Extending Karel, Top
 @c @comment node-name,    next,  previous,      up
 @c @unnumbered Function Index
 @c @printindex fn
 
-@node    Index,  , Extending Karel, Top
+@node    Index,  , Karel Programmers Guide, Top
 @comment node-name,    next,  previous,      up
 @unnumbered Index
 
