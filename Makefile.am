@@ -28,3 +28,4 @@ endif
 dist-hook:
 	mkdir $(distdir)/samples
 	cp -p $(srcdir)/samples/*.k $(distdir)/samples
+	cp -p $(srcdir)/samples/*.wld $(distdir)/samples
