@@ -268,7 +268,7 @@ int
 k_robot_right_is_clear(k_robot_t *r)
 {
   int result = (! k_robot_right_is_blocked(r));
-  printf("right-is-clear == %s\n", (result?"TRUE":"FALSE"));
+/*    printf("right-is-clear == %s\n", (result?"TRUE":"FALSE")); */
   return result;
 }
 
@@ -289,7 +289,7 @@ int k_robot_move(k_robot_t *r)
     case K_NORTH:
       if (k_world_check_ew_wall(r->world, r->street, r->avenue))
 	{
-	  fprintf(stderr, "Karel hit a wall!\n");
+	  fprintf(stderr, "Karel hit a wall to the north!\n");
 	  return K_ERROR;
 	}
       else
@@ -302,7 +302,7 @@ int k_robot_move(k_robot_t *r)
     case K_EAST:
       if (k_world_check_ns_wall(r->world, r->street, r->avenue))
 	{
-	  fprintf(stderr, "Karel hit a wall!\n");
+	  fprintf(stderr, "Karel hit a wall to the east!\n");
 	  return K_ERROR;
 	}
       else
@@ -316,12 +316,12 @@ int k_robot_move(k_robot_t *r)
     case K_SOUTH:
       if (r->street == 1)
 	{
-	  fprintf(stderr, "Karel hit a wall!\n");
+	  fprintf(stderr, "Karel hit a wall at the south edge!\n");
 	  return K_ERROR;
 	}
       else if (k_world_check_ew_wall(r->world, r->street - 1, r->avenue))
 	{
-	  fprintf(stderr, "Karel hit a wall!\n");
+	  fprintf(stderr, "Karel hit a wall to the south!\n");
 	  return K_ERROR;
 	}
       else
@@ -334,12 +334,12 @@ int k_robot_move(k_robot_t *r)
     case K_WEST:
       if (r->avenue == 1)
 	{
-	  fprintf(stderr, "Karel hit a wall!\n");
+	  fprintf(stderr, "Karel hit a wall at the west edge!\n");
 	  return K_ERROR;
 	}
       if (k_world_check_ns_wall(r->world, r->street, r->avenue - 1))
 	{
-	  fprintf(stderr, "Karel hit a wall!\n");
+	  fprintf(stderr, "Karel hit a wall to the west!\n");
 	  return K_ERROR;
 	}
       else
