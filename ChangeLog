@@ -1,4 +1,19 @@
-2000-06-29    <tmitchel@wolfjaw.bbn.com>
+2000-12-30  Tom Mitchell  <tmitchel@wolfjaw.bbn.com>
+
+	* Released version 0.6
+
+	* configure.in: Upped version to 0.6 for release
+
+	* libkarel/karel.h: added initial robot values to the world
+	structure.
+
+	* libkarel/world.c (ktr_world_read): added code to store initial
+	robot settings (ave, st, dir, beepers) to the world structure.
+
+	* gtk/karel.c (main): use the initial robot settings from the
+	loaded world.
+
+2000-06-29  tmitchel
 
 	* libkarel/world.c (ktr_world_read): added world disk file
 	capability.
