@@ -4,16 +4,10 @@
 /*----------------------------------------------------------------------*
 			       Defines
  *----------------------------------------------------------------------*/
-/* interpreter states */
-#define	OFF	0
-#define	COMPILE	1
-#define	EDIT	2
-#define	RUN	3
-
 /* marks end of procedure or main block */
-#define	RETURN	(ktr_instruction_t) 0
+#define	KTR_RETURN	(ktr_instruction_t) 0
 
-#define DEF_INST(x) int x(ktr_engine_t *e, ktr_robot_t *r)
+#define KTR_DEF_INST(x) int x(ktr_engine_t *e, ktr_robot_t *r)
 
 /*!
   @defined KTR_ERROR
@@ -53,11 +47,11 @@ typedef struct ktr_builtin {
 /*!
   @abstract representation of a symbol
  */
-typedef	struct Symbol {
+typedef	struct ktr_symbol {
   char *name;
   int addr;
-  struct Symbol *next;
-} Symbol;
+  struct ktr_symbol *next;
+} ktr_symbol_t;
 
 /*----------------------------------------------------------------------*
 			   Global Variables
@@ -73,10 +67,6 @@ extern ktr_keyword_t keywords[];
  */
 extern ktr_builtin_t bltins[];
 
-/*!
- */
-extern int progp;
-
 extern int gotturnoff, linecount, tokenid;
 
 extern char yytext[];
@@ -88,12 +78,12 @@ extern char yytext[];
 /*!
  * find s in symbol table
  */
-Symbol *lookup(char *s);
+ktr_symbol_t *ktr_symbol_lookup(char *s);
 
 /*!
  * install s in symbol table
  */
-void install(char *s);
+void ktr_symbol_install(char *s);
 
 /*!
   @function ktr_initlex
@@ -108,18 +98,6 @@ void ktr_initlex(FILE *in_file, ktr_engine_t *engine);
 int yylex(void);
 
 /*
-  system error: print error message and die
-*/
-void
-syserr(char *s, char *t);
-
-/*
-  print error message
-*/
-void
-err(char *s, char *t);
-
-/*
   handle parser error
 */
 void
@@ -128,6 +106,10 @@ yyerror(char *s);
 /*
  */
 int ktr_lex_get_progp (void);
+
+/*
+ */
+int ktr_lex_linecount (void);
 
 /*
  */
@@ -177,41 +159,41 @@ void ktr_engine_codeint(ktr_engine_t *engine, int n);
 		     Program flow implementation
  *----------------------------------------------------------------------*/
 
-DEF_INST(ktr_engine_call);
-DEF_INST(ktr_engine_loopexec);
-DEF_INST(ktr_engine_condbranch);
-DEF_INST(ktr_engine_branch);
-DEF_INST(ktr_engine_turnoff);
+KTR_DEF_INST(ktr_engine_call);
+KTR_DEF_INST(ktr_engine_loopexec);
+KTR_DEF_INST(ktr_engine_condbranch);
+KTR_DEF_INST(ktr_engine_branch);
+KTR_DEF_INST(ktr_engine_turnoff);
 
 /*----------------------------------------------------------------------*
  			   Karel Built-in tests
  *----------------------------------------------------------------------*/
-DEF_INST(ktr_robot_any_beepers_in_beeper_bag);
-DEF_INST(ktr_robot_facing_east);
-DEF_INST(ktr_robot_facing_north);
-DEF_INST(ktr_robot_facing_south);
-DEF_INST(ktr_robot_facing_west);
-DEF_INST(ktr_robot_front_is_blocked);
-DEF_INST(ktr_robot_front_is_clear);
-DEF_INST(ktr_robot_left_is_blocked);
-DEF_INST(ktr_robot_left_is_clear);
-DEF_INST(ktr_robot_next_to_a_beeper);
-DEF_INST(ktr_robot_no_beepers_in_beeper_bag);
-DEF_INST(ktr_robot_not_facing_east);
-DEF_INST(ktr_robot_not_facing_north);
-DEF_INST(ktr_robot_not_facing_south);
-DEF_INST(ktr_robot_not_facing_west);
-DEF_INST(ktr_robot_not_next_to_a_beeper);
-DEF_INST(ktr_robot_right_is_blocked);
-DEF_INST(ktr_robot_right_is_clear);
+KTR_DEF_INST(ktr_robot_any_beepers_in_beeper_bag);
+KTR_DEF_INST(ktr_robot_facing_east);
+KTR_DEF_INST(ktr_robot_facing_north);
+KTR_DEF_INST(ktr_robot_facing_south);
+KTR_DEF_INST(ktr_robot_facing_west);
+KTR_DEF_INST(ktr_robot_front_is_blocked);
+KTR_DEF_INST(ktr_robot_front_is_clear);
+KTR_DEF_INST(ktr_robot_left_is_blocked);
+KTR_DEF_INST(ktr_robot_left_is_clear);
+KTR_DEF_INST(ktr_robot_next_to_a_beeper);
+KTR_DEF_INST(ktr_robot_no_beepers_in_beeper_bag);
+KTR_DEF_INST(ktr_robot_not_facing_east);
+KTR_DEF_INST(ktr_robot_not_facing_north);
+KTR_DEF_INST(ktr_robot_not_facing_south);
+KTR_DEF_INST(ktr_robot_not_facing_west);
+KTR_DEF_INST(ktr_robot_not_next_to_a_beeper);
+KTR_DEF_INST(ktr_robot_right_is_blocked);
+KTR_DEF_INST(ktr_robot_right_is_clear);
 
 /*----------------------------------------------------------------------*
  			   Karel Built-in procedures
  *----------------------------------------------------------------------*/
 
-DEF_INST(ktr_robot_move);
-DEF_INST(ktr_robot_pickbeeper);
-DEF_INST(ktr_robot_putbeeper);
-DEF_INST(ktr_robot_turnleft);
+KTR_DEF_INST(ktr_robot_move);
+KTR_DEF_INST(ktr_robot_pickbeeper);
+KTR_DEF_INST(ktr_robot_putbeeper);
+KTR_DEF_INST(ktr_robot_turnleft);
 
 #endif /* __karelP_h */

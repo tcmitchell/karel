@@ -66,7 +66,7 @@ YACC = @YACC@
 
 lib_LIBRARIES = libkarel.a
 
-libkarel_a_SOURCES = engine.c 			error.c 			fatal.c 			karel.h karelP.h 			klex.c 			kparse.y kparse.h 			memory.c 			nomem.c 			robot.c 			symbol.c 			world.c
+libkarel_a_SOURCES = engine.c 			fatal.c 			karel.h karelP.h 			klex.c 			kparse.y kparse.h 			memory.c 			nomem.c 			parseerr.c 			robot.c 			symbol.c 			world.c 			yyerror.c
 
 
 YFLAGS = -d
@@ -82,8 +82,8 @@ CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 libkarel_a_LIBADD = 
-libkarel_a_OBJECTS =  engine.o error.o fatal.o klex.o kparse.o memory.o \
-nomem.o robot.o symbol.o world.o
+libkarel_a_OBJECTS =  engine.o fatal.o klex.o kparse.o memory.o nomem.o \
+parseerr.o robot.o symbol.o world.o yyerror.o
 AR = ar
 CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -96,9 +96,9 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = gtar
 GZIP_ENV = --best
-DEP_FILES =  .deps/engine.P .deps/error.P .deps/fatal.P .deps/klex.P \
-.deps/kparse.P .deps/memory.P .deps/nomem.P .deps/robot.P \
-.deps/symbol.P .deps/world.P
+DEP_FILES =  .deps/engine.P .deps/fatal.P .deps/klex.P .deps/kparse.P \
+.deps/memory.P .deps/nomem.P .deps/parseerr.P .deps/robot.P \
+.deps/symbol.P .deps/world.P .deps/yyerror.P
 SOURCES = $(libkarel_a_SOURCES)
 OBJECTS = $(libkarel_a_OBJECTS)
 

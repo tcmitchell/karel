@@ -13,10 +13,10 @@
  *----------------------------------------------------------------------*/
 
 /*!
-  @defined MAX_PROG
+  @defined KTR_MAX_PROG
   @discussion The maximum size of a Karel program.
  */
-#define MAX_PROG 500
+#define KTR_MAX_PROG 500
 
 /*----------------------------------------------------------------------*
 			       Typedefs
@@ -106,6 +106,9 @@ typedef struct ktr_robot {
   ktr_robot_turn_callback_t turn_cb;
 } ktr_robot_t;
 
+/*
+  forward declare the engine.
+*/
 struct ktr_engine;
 
 /*!
@@ -125,7 +128,7 @@ typedef ktr_instruction_t Inst;
   @discussion The Karel execution engine object.
  */
 typedef struct ktr_engine {
-  ktr_instruction_t prog[MAX_PROG];
+  ktr_instruction_t prog[KTR_MAX_PROG];
   int progp;			/* The program pointer */
   int pc;			/* The execution pointer */
   int startaddr;		/* The location of main */
@@ -136,9 +139,20 @@ typedef struct ktr_engine {
 /*----------------------------------------------------------------------*
 			    Error handlers
  *----------------------------------------------------------------------*/
+/*!
+  @function ktr_nomem_err
+ */
 void ktr_nomem_err (size_t size);
 
+/*!
+  @function ktr_fatal_err
+ */
 void ktr_fatal_err (char *string, ...);
+
+/*!
+  @function ktr_parse_err
+ */
+void ktr_parse_err (char *string, ...);
 
 /*----------------------------------------------------------------------*
 		      Memory management routines

@@ -76,7 +76,7 @@ ktr_engine_execute_internal (ktr_engine_t *engine, ktr_robot_t *r, int address)
 
   temp = engine->pc;
   for (engine->pc = address;
-       ((engine->prog[engine->pc] != RETURN)
+       ((engine->prog[engine->pc] != KTR_RETURN)
 	&& engine->state == KTR_ENGINE_RUNNING);
        engine->pc++)
     engine->flag = (*(engine->prog[engine->pc]))(engine, r);
@@ -128,7 +128,7 @@ ktr_engine_setcodeint (ktr_engine_t *engine, int addr, int n)
 void
 ktr_engine_code (ktr_engine_t *engine, ktr_instruction_t n)
 {
-  if (engine->progp >= MAX_PROG)
+  if (engine->progp >= KTR_MAX_PROG)
     {
       ktr_fatal_err ("program too big");
       exit (1);

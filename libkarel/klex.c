@@ -84,7 +84,12 @@ egetc(FILE *fp)
       return((char) 0);		/* Never executed -- keep gcc happy */
     }
   else
-    return(c);
+    {
+      if (c == '\n')
+	linecount++;
+
+      return(c);
+    }
 }
 
 /*
@@ -143,6 +148,7 @@ ktr_initlex(FILE *in_file, ktr_engine_t *engine)
 
   ktr_lex_curfile = in_file;
   ktr_lex_engine = engine;
+  linecount = 1;
 }
 
 /*
@@ -151,6 +157,14 @@ int
 ktr_lex_get_progp (void)
 {
   return ktr_lex_engine->progp;
+}
+
+/*
+ */
+int
+ktr_lex_linecount (void)
+{
+  return (linecount);
 }
 
 /*
@@ -203,7 +217,7 @@ ktr_lex_codeint(int n)
   Lexical analyzer.
 */
 int
-yylex(void)
+yylex (void)
 {
   int len;				/* length of word */
   int n;

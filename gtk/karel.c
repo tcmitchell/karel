@@ -430,7 +430,7 @@ main (int argc, char *argv[])
   prog_file = argv[1];
   if ((fp = fopen(prog_file, "r")) == NULL)
     {
-      syserr("can't open file: ", prog_file);
+      ktr_fatal_err("can't open file %s", prog_file);
       exit(1);
     }
 
