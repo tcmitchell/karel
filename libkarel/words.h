@@ -1,4 +1,5 @@
-#include	"kparse.h"
+#include "karel.h"
+#include "kparse.h"
 
 /* these lists must be sorted alphabetically in order for the	*/
 /* binary search routine to work				*/
@@ -32,28 +33,28 @@ struct	{
 /* built-in procedures and tests */
 
 Bltintype bltins[] = {
-  { "any-beepers-in-beeper-bag", anybeepers, TEST },
-  { "facing-east", facingeast, TEST },
-  { "facing-north", facingnorth, TEST },
-  { "facing-south", facingsouth, TEST },
-  { "facing-west", facingwest, TEST },
-  { "front-is-blocked", frontblocked, TEST },
-  { "front-is-clear", frontclear, TEST },
-  { "left-is-blocked", leftblocked, TEST },
-  { "left-is-clear", leftclear, TEST },
-  { "move", movekarel, BLTIN },
-  { "next-to-a-beeper", nexttobeeper, TEST },
-  { "no-beepers-in-beeper-bag", nobeepers, TEST },
-  { "not-facing-east", notfacingeast, TEST },
-  { "not-facing-north", notfacingnorth, TEST },
-  { "not-facing-south", notfacingsouth, TEST },
-  { "not-facing-west", notfacingwest, TEST },
-  { "not-next-to-a-beeper", notnexttobeeper, TEST },
-  { "pickbeeper", pickbeeper, BLTIN },
-  { "putbeeper", putbeeper, BLTIN },
-  { "right-is-blocked", rightblocked, TEST },
-  { "right-is-clear", rightclear, TEST },
-  { "turnleft", turnleft, BLTIN },
-  { "turnoff", turnoff, BLTIN },
+  { "any-beepers-in-beeper-bag", k_robot_any_beepers_in_beeper_bag, TEST },
+  { "facing-east", k_robot_facing_east, TEST },
+  { "facing-north", k_robot_facing_north, TEST },
+  { "facing-south", k_robot_facing_south, TEST },
+  { "facing-west", k_robot_facing_west, TEST },
+  { "front-is-blocked", k_robot_front_is_blocked, TEST },
+  { "front-is-clear", k_robot_front_is_clear, TEST },
+  { "left-is-blocked", k_robot_left_is_blocked, TEST },
+  { "left-is-clear", k_robot_left_is_clear, TEST },
+  { "move", k_robot_move, BLTIN },
+  { "next-to-a-beeper", k_robot_next_to_a_beeper, TEST },
+  { "no-beepers-in-beeper-bag", k_robot_no_beepers_in_beeper_bag, TEST },
+  { "not-facing-east", k_robot_not_facing_west, TEST },
+  { "not-facing-north", k_robot_not_facing_north, TEST },
+  { "not-facing-south", k_robot_not_facing_south, TEST },
+  { "not-facing-west", k_robot_not_facing_west, TEST },
+  { "not-next-to-a-beeper", k_robot_not_next_to_a_beeper, TEST },
+  { "pickbeeper", k_robot_pickbeeper, BLTIN },
+  { "putbeeper", k_robot_putbeeper, BLTIN },
+  { "right-is-blocked", k_robot_right_is_blocked, TEST },
+  { "right-is-clear", k_robot_right_is_clear, TEST },
+  { "turnleft", k_robot_turnleft, BLTIN },
+  { "turnoff", k_vm_turnoff, BLTIN },
   { 0, 0, 0 }
 };

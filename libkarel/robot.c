@@ -6,6 +6,12 @@
  *			   Private Functions                            *
  *----------------------------------------------------------------------*/
 
+k_robot_t *the_robot = NULL;
+
+/*----------------------------------------------------------------------*
+ *			   Private Functions                            *
+ *----------------------------------------------------------------------*/
+
 static char *
 dir_to_string(k_direction_t dir)
 {
@@ -245,7 +251,9 @@ k_robot_right_is_blocked(k_robot_t *r)
 int
 k_robot_right_is_clear(k_robot_t *r)
 {
-  return (! k_robot_right_is_blocked(r));
+  int result = (! k_robot_right_is_blocked(r));
+  printf("right-is-clear == %s\n", (result?"TRUE":"FALSE"));
+  return result;
 }
 
 
@@ -290,13 +298,39 @@ int k_robot_move(k_robot_t *r)
       break;
 
     case K_SOUTH:
-      fprintf(stderr, "NYI: South\n");
-      return K_ERROR;
+      if (r->street == 1)
+	{
+	  fprintf(stderr, "Karel hit a wall!\n");
+	  return K_ERROR;
+	}
+      else if (k_world_check_ew_wall(r->world, r->street - 1, r->avenue))
+	{
+	  fprintf(stderr, "Karel hit a wall!\n");
+	  return K_ERROR;
+	}
+      else
+	{
+	  k_robot_set_pos(r, r->street - 1, r->avenue);
+	  return K_OK;
+	}
       break;
 
     case K_WEST:
-      fprintf(stderr, "NYI: West\n");
-      return K_ERROR;
+      if (r->avenue == 1)
+	{
+	  fprintf(stderr, "Karel hit a wall!\n");
+	  return K_ERROR;
+	}
+      if (k_world_check_ns_wall(r->world, r->street, r->avenue - 1))
+	{
+	  fprintf(stderr, "Karel hit a wall!\n");
+	  return K_ERROR;
+	}
+      else
+	{
+	  k_robot_set_pos(r, r->street, r->avenue - 1);
+	  return K_OK;
+	}
       break;
 
     default:

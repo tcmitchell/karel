@@ -11,17 +11,24 @@ int	linecount;			/* no. of lines in input */
 int	yyval;
 char	yytext[BUFSIZ];
 static	char	c;			/* character being handled */
-extern	FILE	*fp;			/* source file; found in main.c */
+
+static FILE *fp = NULL;
 
 void
-initlex(void)				/* prepare the lexical analyzer */
+initlex(FILE *in_file)			/* prepare the lexical analyzer */
 {
-	/* count the number of keywords */
-	for (nkeys = 0; keywords[nkeys].name; nkeys++)
-		;
-	for (nbltins = 0; bltins[nbltins].name; nbltins++)
-		;
-	c = ' ';
+  /* count the number of keywords */
+  for (nkeys = 0; keywords[nkeys].name; nkeys++)
+    ;
+
+  /* count the number of builtins */
+  for (nbltins = 0; bltins[nbltins].name; nbltins++)
+    ;
+
+  /* set the current character */
+  c = ' ';
+
+  fp = in_file;
 }
 
 char
@@ -41,14 +48,13 @@ egetc(FILE *fp)			/* get a character, checking for EOF */
 }
 
 void
-skipwhite(void)			/* skip over white space (tabs, etc.) */
+skipwhite(FILE *fp)		/* skip over white space (tabs, etc.) */
 {
   while (isspace((int) c))
     {
       if (c == '\n')
-	{
-	  linecount++;
-	}
+	linecount++;
+
       c = (char) getc(fp);
     }
 }
@@ -56,14 +62,12 @@ skipwhite(void)			/* skip over white space (tabs, etc.) */
 int
 getkeyid(char *s)	/* find s in keyword array; return -1 if not found */
 {
-  int i = 0;
+  int i;
+
   for (i=0; i<nkeys; i++)
-    {
-      if (strcmp(s, keywords[i].name) == 0)
-	{
-	  return i;
-	}
-    }
+    if (strcmp(s, keywords[i].name) == 0)
+      return i;
+
   return -1;
 }
 
@@ -149,12 +153,12 @@ yylex(void)				/* lexical analyzer */
 	int	len;				/* length of word	*/
 	int	n;				/* temporary		*/
 
-	skipwhite();
+	skipwhite(fp);
 	while (c == '{') {				/* skip over comment */
 		while (c != '}')
 			c = egetc(fp);
 		c = getc(fp);
-		skipwhite();
+		skipwhite(fp);
 	}
 	len = 0;
 	while (isalnum((int) c) || c == '-') {		/* read one word */

@@ -1,39 +1,34 @@
-#include	"karel.h"
+/*  #include "karel.h" */
+#include "util.h"
+#include "symbol.h"
 
-static	Symbol	*symtab = 0;		/* the symbol table */
+/* FIX THIS */
+extern int progp;		/* from code.c */
 
+static	Symbol	*symtab = 0;	/* the symbol table */
+
+/* find s in symbol table */
 Symbol *
-lookup(char *s)			/* find s in symbol table */
+lookup(char *s)
 {
-	Symbol	*sp;					/* loop index */
+  Symbol *sp;			/* loop index */
 
-	for (sp = symtab; sp != (Symbol *) 0; sp = sp->next)
-		if (strcmp(s, sp->name) == 0)
-			return(sp);
-	return(0);			/* not found */
+  for (sp = symtab; sp != (Symbol *) 0; sp = sp->next)
+    if (strcmp(s, sp->name) == 0)
+      return(sp);
+  return(NULL);			/* not found */
 }
 
+/* install s in symbol table */
 void
-install(char *s)			/* install s in symbol table */
+install(char *s)
 {
-	char	*emalloc();
-	Symbol	*sp;				/* new symbol table entry */
+  Symbol *sp;			/* new symbol table entry */
 
-	sp = (Symbol *) emalloc(sizeof(Symbol));
-	sp->name = emalloc(strlen(s) + 1);
-	strcpy(sp->name, s);
-	sp->addr = progp;
-	sp->next = symtab;
-	symtab = sp;
-}
-
-char	*emalloc(n)		/* do malloc with error checking */
-int	n;
-{
-	char	*p;			/* pointer to free memory */
-	char	*malloc();
-
-	if ((p = malloc(n)) == (char *) 0)
-		syserr("out of memory", (char *) 0);
-	return(p);
+  sp = (Symbol *) emalloc(sizeof(Symbol));
+  sp->name = emalloc(strlen(s) + 1);
+  strcpy(sp->name, s);
+  sp->addr = progp;
+  sp->next = symtab;
+  symtab = sp;
 }

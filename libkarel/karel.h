@@ -1,3 +1,10 @@
+#ifndef __karel_h
+#define __karel_h
+
+#include <stdio.h>
+#include "error.h"
+#include "robot.h"
+
 /* file name suffixes */
 #define	PROGSUFFIX	"k"
 #define	SCRSUFFIX	"scr"
@@ -8,7 +15,9 @@
 #define	EDIT	2
 #define	RUN	3
 
-typedef	void	(*Inst)(void);		/* pseudo-compiled instruction */
+#define DEF_INST(x) int x(k_robot_t *r)
+
+typedef	int (*Inst)(k_robot_t *);	/* pseudo-compiled instruction */
 
 /* marks end of procedure or main block */
 #define	RETURN	(Inst) 0
@@ -19,21 +28,13 @@ typedef struct	Bltintype {		/* built-in procedure entry */
 	int	type;
 } Bltintype;
 
-typedef	struct	Symbol {		/* symbol table entry */
-	char	*name;
-	int	addr;
-	struct	Symbol	*next;
-} Symbol;
+/* in robot.c */
+extern k_robot_t *the_robot;
 
 /* in main.c */
 extern int nflg;
 extern int state;
-extern void severe(char *s, char *t);	/* print error message and die */
-extern void err(char *s, char *t);	/* print error message */
-extern void interrupt(int arg);		/* handle interupts, die */
 extern void screrror(char *s);		/* reset terminal modes, die */
-void syserr(char *s, char *t);	/* system error: print error message and die */
-void yyerror(char *s);			/* handle parser error */
 extern char *progname;
 extern char basename[];
 
@@ -41,16 +42,11 @@ extern char basename[];
 /* in words.h */
 extern	Bltintype	bltins[];
 
-/* in symbol.c */
-extern Symbol *symtab;
-extern Symbol *lookup(char *s);		/* find s in symbol table */
-extern void install(char *s);		/* install s in symbol table */
-
 /* in klex.c */
 extern int nkeys, gotsemcolon, gotturnoff, linecount, tokenid, yyval;
 extern int yylex(void);			/* lexical analyzer */
 extern char yytext[];
-void initlex(void);			/* prepare the lexical analyzer */
+void initlex(FILE *in_file);		/* prepare the lexical analyzer */
 
 
 /* in code.c */
@@ -58,16 +54,22 @@ extern int progp, startaddr;
 extern void initcode(void);
 void setcode(int addr, Inst n);		/* install one program instruction */
 void code(Inst n);			/* install next instruction */
-void execute(int n);			/* execute machine */
 extern void anybeepers(), facingeast(), facingnorth(), facingsouth();
 extern void facingwest(), frontblocked(), frontclear(), leftblocked();
 extern void leftclear(), nexttobeeper(), nobeepers();
 extern void notfacingeast(), notfacingnorth(), notfacingsouth(), notfacingwest();
 extern void notnexttobeeper(), rightblocked();
 extern void rightclear(), turnleft(), turnoff();
-extern void condbranch(), branch(), call(), bltin(), loopexec();
+extern void bltin();
 void codeint(int n);			/* install a int as next instruction */
 void setcodeint(int addr, int n);	/* install one int */
+
+int execute(k_robot_t *r, int n);		/* execute machine */
+DEF_INST(call);
+DEF_INST(loopexec);
+DEF_INST(condbranch);
+DEF_INST(branch);
+DEF_INST(k_vm_turnoff);
 
 /* in scr.c */
 extern int beepers, dir, x, y;
@@ -84,3 +86,5 @@ void readscrn(void);		/* read screen in from a file */
 void shutoff(char *s);		/* print s on bottom of screen */
 void editscr(void);		/* main interactive loop */
 int sideclear(int n);		/* return 1 if side n is clear, 0 otherwise */
+
+#endif /*__karel_h */

@@ -8,6 +8,8 @@
 #define	advpc		++pc
 #define	nextinst	prog[advpc]
 
+static int vm_state = 1;
+
 Inst	prog[NPROG];				/* the machine		*/
 int	progp;					/* next spot for code	*/
 int	pc;					/* program counter	*/
@@ -41,114 +43,80 @@ code(Inst n)					/* install next instruction */
   if (progp >= NPROG)
     {
       severe("program too big", (char *) 0);
+      return;
     }
-  setcode(progp++, n);
+  else
+    setcode(progp++, n);
 }
 
 void
-codeint(int n)				/* install a int as next instruction */
+codeint(int n)			/* install an int as next instruction */
 {
   code((Inst) n);
 }
 
-void
-execute(int n)					/* execute machine */
+int
+execute(k_robot_t *r, int n)		/* execute machine */
 {
   int temp;
 
   temp = pc;
-  for (pc = n; (prog[pc] != RETURN) && state; pc++)
+  for (pc = n; (prog[pc] != RETURN) && vm_state; pc++)
     {
-      (*(prog[pc]))();
-      update();
+      flag = (*(prog[pc]))(r);
+/*        update(); */   /* Was for curses.  Decouple! */
     }
   pc = temp;
+  return 0;
 }
 
-void
-turnleft(void)				/* turn karel 90 degrees left */
+int
+branch(k_robot_t *r)			/* jump to another instruction */
 {
-  if (--dir < 0)
-    {
-      dir = 3;
-    }
-  placekarel(y, x);
-}
+  r = r;			/* Keep gcc happy */
 
-void
-branch(void)				/* jump to another instruction */
-{
   dest = (int) nextinst;
   pc = dest - 1;
+  return 0;
 }
 
-void
-condbranch(void)			/* jump of last logic test was false */
+int
+condbranch(k_robot_t *r)	/* jump of last logic test was false */
 {
+  r = r;			/* Keep gcc happy */
+
   if (!flag)
-    {
-      branch();
-    }
+    branch(r);
   else
-    {
-      advpc;
-    }
+    advpc;
+
+  return 0;
 }
 
-void
-call(void)				/* call a user-defined instruction */
+int
+call(k_robot_t *r)			/* call a user-defined instruction */
 {
-  execute((int) nextinst);
+  return execute(r, (int) nextinst);
 }
 
-void
-loopexec(void)			/* execute block of code a number of times */
+int
+loopexec(k_robot_t *r)		/* execute block of code a number of times */
 {
   int k, limit, loopbody;
 
   limit = (int) nextinst;
   loopbody = pc + 2;
   for (k = 0; k < limit; k++)
-    {
-      execute(loopbody);
-    }
-  branch();
+    execute(r, loopbody);
+
+  branch(r);
+  return 0;
 }
 
-void
-turnoff(void)					/* end program execution */
+int
+k_vm_turnoff(k_robot_t *r)
 {
-  state = OFF;
-}
-
-/* code for built-in logical test */
-
-void anybeepers(void)		{	flag = beepers;			}
-void facingeast(void)		{	flag = (dir == 1);		}
-void facingnorth(void)		{	flag = (dir == 0);		}
-void facingsouth(void)		{	flag = (dir == 2);		}
-void facingwest(void)		{	flag = (dir == 3);		}
-void frontblocked(void)		{	flag = !sideclear(dir);		}
-void frontclear(void)		{	flag = sideclear(dir);		}
-void leftblocked(void)		{	flag = !sideclear(dir-1);	}
-void leftclear(void)		{	flag = sideclear(dir-1);	}
-void nobeepers(void)		{	flag = !beepers;		}
-void notfacingeast(void)	{	flag = (dir != 1);		}
-void notfacingnorth(void)	{	flag = (dir != 0);		}
-void notfacingsouth(void)	{	flag = (dir != 2);		}
-void notfacingwest(void)	{	flag = (dir != 3);		}
-void rightblocked(void)		{	flag = !sideclear(dir+1);	}
-void rightclear(void)		{	flag = sideclear(dir+1);	}
-
-void
-nexttobeeper(void)
-{
-	flag = (oldch == '*' || (oldch >= '0' && oldch <= '9'));
-}
-
-void
-notnexttobeeper(void)
-{
-	nexttobeeper();
-	flag = !flag;
+  r = r;
+  vm_state = 0;
+  return 0;
 }
