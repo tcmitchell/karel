@@ -29,6 +29,7 @@ clean:
 
 distclean:	clean
 	$(RM) *~
+	$(RM) config.* Makefile
 
 depend:	$(SRCS) $(HDRS)
 	makedepend $(SRCS) $(HDRS)
