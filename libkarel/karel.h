@@ -29,6 +29,8 @@ typedef	struct	Symbol {		/* symbol table entry */
 extern	nflg, state;
 extern	severe(), err(), interupt(), screrror();
 extern	char	*progname, basename[];
+extern void interrupt(int arg);
+
 
 /* in words.h */
 extern	Bltintype	bltins[];

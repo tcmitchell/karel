@@ -121,12 +121,12 @@ initialize()				/* prepare for screen editing */
 {
 	int	k;
 
-	if (initscr() == ERR || strcmp(ttytype, "unknown") == 0) {
+	if (initscr() == NULL || strcmp(ttytype, "unknown") == 0) {
 		fprintf(stderr, "TERM variable not set\n");
 		exit(0);
 	}
 	sprintf(scrnname, "%s.%s", basename, SCRSUFFIX);
-	signal(SIGINT, interupt);
+	signal(SIGINT, interrupt);
 	scrollok(stdscr, FALSE);
 	crmode();
 	noecho();

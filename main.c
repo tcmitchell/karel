@@ -135,7 +135,8 @@ char	*s;
 	fputc('\n', stderr);
 }
 
-interupt()					/* handle interupts, die */
+void
+interrupt(int arg)				/* handle interupts, die */
 {
 	signal(SIGINT, SIG_IGN);
 	finish();
