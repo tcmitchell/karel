@@ -21,6 +21,5 @@ dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
 
 dnl Checks for library functions.
-AC_TYPE_SIGNAL
 
 AC_OUTPUT(Makefile libkarel/Makefile test/Makefile curses/Makefile gtk/Makefile)
