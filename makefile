@@ -7,6 +7,8 @@ OBJS = $(SRCS:.c=.o)
 CC = gcc
 CFLAGS = -W -Wall -g
 #CFLAGS = -ansi -g
+YACC = bison
+YFLAGS = -d -y
 LDFLAGS = -lcurses -ltermcap
 
 karel:		$(OBJS)
@@ -15,7 +17,8 @@ karel:		$(OBJS)
 $(OBJS):	karel.h
 
 y.tab.c y.tab.h:	karel.y
-		yacc -d karel.y
+	$(YACC.y) karel.y
+#		yacc -d karel.y
 
 scr.o:		help.h
 

@@ -33,6 +33,7 @@ extern void err(char *s, char *t);	/* print error message */
 extern void interrupt(int arg);		/* handle interupts, die */
 extern void screrror(char *s);		/* reset terminal modes, die */
 void syserr(char *s, char *t);	/* system error: print error message and die */
+void yyerror(char *s);			/* handle parser error */
 extern char *progname;
 extern char basename[];
 
