@@ -32,6 +32,22 @@ test_main(int argc, char **argv)
   return 0;
 }
 
+void
+handle_robot_move_event(k_robot_move_event_t *ev)
+{
+  printf("robot moved from %d, %d to %d, %d\n",
+	 ev->old_street, ev->old_avenue,
+	 ev->new_street, ev->new_avenue);
+}
+
+void
+handle_robot_turn_event(k_robot_turn_event_t *ev)
+{
+  printf("robot turned from %s to %s\n",
+	 k_robot_dir_to_string(ev->old_direction),
+	 k_robot_dir_to_string(ev->new_direction));
+}
+
 int
 main(int argc, char **argv)
 {
@@ -57,6 +73,8 @@ main(int argc, char **argv)
 
   world = k_world_create(5, 5);
   robot = k_robot_create(world, 4, 2, K_NORTH, 5);
+  k_robot_set_move_callback(robot, handle_robot_move_event);
+  k_robot_set_turn_callback(robot, handle_robot_turn_event);
   
   execute(robot, startaddr);
 

@@ -28,9 +28,6 @@ typedef struct	Bltintype {		/* built-in procedure entry */
 	int	type;
 } Bltintype;
 
-/* in robot.c */
-extern k_robot_t *the_robot;
-
 /* in main.c */
 extern int nflg;
 extern int state;

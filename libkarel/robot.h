@@ -13,12 +13,41 @@ typedef enum {
   K_WEST
 } k_direction_t;
 
-typedef struct robot {
+/*!
+ *
+ */
+typedef struct k_robot_move_event {
+  int old_street;
+  int old_avenue;
+  int new_street;
+  int new_avenue;
+} k_robot_move_event_t;
+
+/*!
+ *
+ */
+typedef struct k_robot_turn_event {
+  k_direction_t old_direction;
+  k_direction_t new_direction;
+} k_robot_turn_event_t;
+
+/*!
+ *
+ */
+typedef	void (*k_robot_move_callback_t)(k_robot_move_event_t *);
+typedef	void (*k_robot_turn_callback_t)(k_robot_turn_event_t *);
+
+/*!
+ *
+ */
+typedef struct k_robot {
   int street;
   int avenue;
   int n_beepers;
   k_direction_t dir;
   k_world_t *world;
+  k_robot_move_callback_t move_cb;
+  k_robot_turn_callback_t turn_cb;
 } k_robot_t;
 
 /*
@@ -30,9 +59,17 @@ k_robot_create(k_world_t *world,
 	       int street, int avenue,
 	       k_direction_t dir, int n_beepers);
 
+void
+k_robot_set_move_callback(k_robot_t *r, k_robot_move_callback_t cb);
+
+void
+k_robot_set_turn_callback(k_robot_t *r, k_robot_turn_callback_t cb);
+
 /*!
  */
 void k_robot_get_pos(k_robot_t *r, int *street, int *avenue);
+
+char *k_robot_dir_to_string(k_direction_t dir);
 
 /*----------------------------------------------------------------------*
  *			   Karel Built-in tests                         *

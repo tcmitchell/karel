@@ -1,53 +1,57 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "robot.h"
+#include "util.h"
 
 /*----------------------------------------------------------------------*
  *			   Private Functions                            *
  *----------------------------------------------------------------------*/
 
-k_robot_t *the_robot = NULL;
-
-/*----------------------------------------------------------------------*
- *			   Private Functions                            *
- *----------------------------------------------------------------------*/
-
-static char *
-dir_to_string(k_direction_t dir)
+static k_robot_move_event_t *
+k_robot_create_move_event(int old_s, int old_a, int new_s, int new_a)
 {
-  switch (dir)
-    {
-    case K_NORTH:
-      return "North";
+  k_robot_move_event_t *ev;
 
-    case K_EAST:
-      return "East";
+  ev = (k_robot_move_event_t *) emalloc(sizeof(k_robot_move_event_t));
+  ev->old_street = old_s;
+  ev->old_avenue = old_a;
+  ev->new_street = new_s;
+  ev->new_avenue = new_a;
+  return ev;
+}
 
-    case K_SOUTH:
-      return "South";
+static k_robot_turn_event_t *
+k_robot_create_turn_event(k_direction_t old, k_direction_t new)
+{
+  k_robot_turn_event_t *ev;
 
-    case K_WEST:
-      return "West";
-
-    default:
-      return "Unknown";
-      break;
-    }
+  ev = (k_robot_turn_event_t *) emalloc(sizeof(k_robot_turn_event_t));
+  ev->old_direction = old;
+  ev->new_direction = new;
+  return ev;
 }
 
 static void
 k_robot_set_pos(k_robot_t *r, int street, int avenue)
 {
+  k_robot_move_event_t *ev;
+
+  ev = k_robot_create_move_event(r->street, r->avenue, street, avenue);
   r->street = street;
   r->avenue = avenue;
-  fprintf(stdout, "Karel moved to %d, %d\n", r->street, r->avenue);
+  if (r->move_cb)
+    r->move_cb(ev);
 }
 
 static void
 k_robot_set_dir(k_robot_t *r, k_direction_t dir)
 {
+  k_robot_turn_event_t *ev;
+
+  ev = k_robot_create_turn_event(r->dir, dir);
   r->dir = dir;
-  fprintf(stdout, "Karel is now facing %s\n", dir_to_string(r->dir));
+  if (r->turn_cb)
+    r->turn_cb(ev);
 }
 
 static int
@@ -98,6 +102,18 @@ k_robot_create(k_world_t *world, int street, int avenue,
   robot->world = world;
 
   return robot;
+}
+
+void
+k_robot_set_move_callback(k_robot_t *r, k_robot_move_callback_t cb)
+{
+  r->move_cb = cb;
+}
+
+void
+k_robot_set_turn_callback(k_robot_t *r, k_robot_turn_callback_t cb)
+{
+  r->turn_cb = cb;
 }
 
 void
@@ -402,4 +418,30 @@ k_robot_turnoff(k_robot_t *r)
 {
   r = r;			/* Keep gcc happy */
   return K_OK;
+}
+
+/*----------------------------------------------------------------------*
+ *		       Public Utility Functions                         *
+ *----------------------------------------------------------------------*/
+char *
+k_robot_dir_to_string(k_direction_t dir)
+{
+  switch (dir)
+    {
+    case K_NORTH:
+      return "North";
+
+    case K_EAST:
+      return "East";
+
+    case K_SOUTH:
+      return "South";
+
+    case K_WEST:
+      return "West";
+
+    default:
+      return "Unknown";
+      break;
+    }
 }
