@@ -4,9 +4,10 @@
 @set VERSION 0.1
 
 @c %**start of header
-@smallbook
+@c @smallbook
 @setfilename karel.info
 @settitle Karel the Robot
+@syncodeindex fn cp
 @c %**end of header
 
 @setchapternewpage odd
@@ -74,8 +75,7 @@ by the Free Software Foundation.
 
 * The Karel Language::          
 * Extending Karel::             
-* Function Index::              
-* Concept Index::               This index has two entries.
+* Index::                       
 @end menu
 
 @node    Introduction, The Karel Language, Top, Top
@@ -83,14 +83,101 @@ by the Free Software Foundation.
 @chapter Introduction
 
 @menu
-* Acknowledgements::            
 * Learning to Program::         
+* Karel::                       
 * Sample Karel Program::        
 * Running the Karel Simulator::  
 * Things to do::                
+* Acknowledgements::            
 @end menu
 
-@node Acknowledgements, Learning to Program, Introduction, Introduction
+@node Learning to Program, Karel, Introduction, Introduction
+@comment  node-name,  next,  previous,  up
+@section Learning to Program
+
+My first college computer class, in the fall of 1982 used
+@cite{Karel the Robot} as the introduction to programming in Pascal.  I
+found it an entertaining and useful introduction to structured
+programming.  While structured programming has fallen out of favor in
+deference to object oriented programming, I still think this can be a
+useful introduction to computer programming.  And I think that children
+are entertained by the idea of instructing a robot to perform a task,
+and then watching the robot actually follow the instructions.
+
+
+@node Karel, Sample Karel Program, Learning to Program, Introduction
+@section Karel
+
+This document is light on the details of the Karel language.  The
+definitive reference is Richard Pattis' @cite{Karel The Robot: A Gentle
+Introduction to The Art of Programming}.  What this document attempts to
+describe is the Karel simulator, which loads and executes Karel
+programs.
+
+There are three user interfaces that come with the Karel package: text,
+curses, and gtk.  The text interface prints out a line whenever Karel
+moves or turns.  This is useful for debugging and regression testing,
+but not very useful to a user.  The curses interface allows users to run
+Karel programs on a terminal, no windowing system required.  The gtk
+interface can be used on systems that have the X Window system and the
+GTK development headers and libraries.
+
+The architecture of the Karel package is such that developers can build
+their own user interfaces using virtually any toolkit they desire.  All
+they need is a C interface to interact with the Karel engine.  Karel was
+written this way to avoid being tied to any particular GUI toolkit.
+There is a lot of religion in the choice among GUI toolkits, and I set
+the goal of being somewhat independent.  I expect it to be possible to
+build user interfaces to the Karel environment in Qt, Motif/Lesstif,
+Athena, Tcl/Tk, Java, perl, guile, or any other system that has a C
+callout mechanism.
+
+
+@node Sample Karel Program, Running the Karel Simulator, Karel, Introduction
+@section Sample Karel Program
+
+This is a very simple Karel program, although not the simplest of all.
+This program causes Karel to move forward one intersection in the
+direction he is facing.  Then Karel is turned off and the program ends.
+The simplest correct Karel program would not have the move statement,
+Karel would simply be turned off.  Note that in this version of Karel,
+@cindex @{ comment character
+@cindex @} comment character
+the '@{' and '@}' are used for comments, just like Pascal.
+
+@example
+@group
+
+@{ about the simplest karel program you can have @}
+
+BEGINNING-OF-PROGRAM
+  BEGINNING-OF-EXECUTION
+    move;
+    turnoff
+  END-OF-EXECUTION
+END-OF-PROGRAM
+
+@end group
+@end example
+
+
+@node Running the Karel Simulator, Things to do, Sample Karel Program, Introduction
+@section Running the Karel Simulator
+
+
+@node Things to do, Acknowledgements, Running the Karel Simulator, Introduction
+@section Things to do
+
+@enumerate
+@item
+Save and read world description files
+
+@item
+debugger/code stepper
+@end enumerate
+
+
+@node Acknowledgements,  , Things to do, Introduction
 @comment  node-name,  next,  previous,  up
 @section Acknowledgements
 @cindex Miksovsky, Jan
@@ -112,51 +199,8 @@ Jan's code, but the concepts behind the simulator, and particularly the
 engine that builds and executes a Karel program, are Jan's, and I
 probably couldn't have written this system without his lead to follow.
 
-@node Learning to Program, Sample Karel Program, Acknowledgements, Introduction
-@comment  node-name,  next,  previous,  up
-@section Learning to Program
-
-My first college computer class, in the fall of 1982 used
-@cite{Karel the Robot} as the introduction to programming in Pascal.  I
-found it an entertaining and useful introduction to structured
-programming.  While structured programming has fallen out of favor in
-deference to object oriented programming, I still think this can be a
-useful introduction to computer programming.  And I think that children
-are entertained by the idea of instructing a robot to perform a task,
-and then watching the robot actually follow the instructions.
 
 
-@node Sample Karel Program, Running the Karel Simulator, Learning to Program, Introduction
-@section Sample Karel Program
-
-@smallexample
-
-@{ about the simplest karel program you can have @}
-
-BEGINNING-OF-PROGRAM
-  BEGINNING-OF-EXECUTION
-    move;
-    turnoff
-  END-OF-EXECUTION
-END-OF-PROGRAM
-
-@end smallexample
-
-
-@node Running the Karel Simulator, Things to do, Sample Karel Program, Introduction
-@section Running the Karel Simulator
-
-
-@node Things to do,  , Running the Karel Simulator, Introduction
-@section Things to do
-
-@enumerate
-@item
-Save and read world description files
-
-@item
-debugger/code stepper
-@end enumerate
 
 
 @node The Karel Language, Extending Karel, Introduction, Top
@@ -176,15 +220,27 @@ debugger/code stepper
 Move Karel one intersection forward.
 @end deffn
 
+@deffn Built-in turnleft
+Pivots Karel 90 degrees left.
+@end deffn
+
+@deffn Built-in pickbeeper
+Take a beeper from the current intersection and put it in the beeper bag.
+@end deffn
+
+@deffn Built-in putbeeper
+Take a beeper from the beeper bag and put it at the current intersection.
+@end deffn
+
 @deffn Built-in turnoff
-Turn off Karel
+Turn Karel off.
 @end deffn
 
 @node Tests, Control Structures, Primitives, The Karel Language
 @section Tests
 
 @deffn Test front-is-clear
-Your description here!
+True if there is no wall directly in front of Karel.  False if there is.
 @end deffn
 
 @deffn Test front-is-blocked
@@ -192,19 +248,19 @@ True if there is a wall directly in front of Karel.  False otherwise.
 @end deffn
 
 @deffn Test left-is-clear
-Your description here!
+True if there is no wall immediately to Karel's left.  False if there is.
 @end deffn
 
 @deffn Test left-is-blocked
-Your description here!
+True if there is a wall immediately to Karel's left.  False otherwise.
 @end deffn
 
 @deffn Test right-is-clear
-Your description here!
+True if there is no wall immediately to Karel's right.  False if there is.
 @end deffn
 
 @deffn Test right-is-blocked
-Your description here!
+True if there is a wall immediately to Karel's right.  False otherwise.
 @end deffn
 
 @deffn Test next-to-a-beeper
@@ -213,47 +269,50 @@ otherwise.
 @end deffn
 
 @deffn Test not-next-to-a-beeper
-Your description here!
+True if there is not beeper at the current intersection.  False if there
+is a beeper at the current intersection.
 @end deffn
 
 @deffn Test facing-north
-Your description here!
+True if Karel is facing north.  False otherwise.
 @end deffn
 
 @deffn Test not-facing-north
-Your description here!
+True if Karel is not facing north.  False if he is facing north.
 @end deffn
 
 @deffn Test facing-south
-Your description here!
+True if Karel is facing south.  False otherwise.
 @end deffn
 
 @deffn Test not-facing-south
-Your description here!
+True if Karel is not facing south.  False if he is facing south.
 @end deffn
 
 @deffn Test facing-east
-Your description here!
+True if Karel is facing east.  False otherwise.
 @end deffn
 
 @deffn Test not-facing-east
-Your description here!
+True if Karel is not facing east.  False if he is facing east.
 @end deffn
 
 @deffn Test facing-west
-Your description here!
+True if Karel is facing west.  False otherwise.
 @end deffn
 
 @deffn Test not-facing-west
-Your description here!
+True if Karel is not facing west.  False if he is facing west.
 @end deffn
 
 @deffn Test any-beepers-in-beeper-bag
-Your description here!
+True if there is at least one beeper in Karel's beeper bag.  False if
+the beeper bag is empty.
 @end deffn
 
 @deffn Test no-beepers-in-beeper-bag
-Your description here!
+True if Karel's beeper bag is empty.  False if there is at least one
+beeper in the beeper bag.
 @end deffn
 
 
@@ -261,39 +320,241 @@ Your description here!
 @node Control Structures, Defining Procedures, Tests, The Karel Language
 @section Control Structures
 
+@example
+@group
+BEGINNING-OF-PROGRAM
+  <definitions>
+    BEGINNING-OF-EXECUTION
+      <stmt>;
+      <stmt>;
+      <stmt>;
+      ...
+    END-OF-EXECUTION
+END-OF-PROGRAM
+@end group
+@end example
+
+
+@example
+@group
+  BEGIN
+    <stmt>;
+    <stmt>;
+    <stmt>;
+    ...
+  END;
+
+  IF <test>
+    THEN <stmt>
+    [ ELSE <stmt> ]
+
+  ITERATE <positive-integer> TIMES
+    <stmt>
+
+  WHILE <test> DO
+    <stmt>
+@end group
+@end example
+
+
 @node Defining Procedures,  , Control Structures, The Karel Language
 @section Defining Procedures
 
-@node Extending Karel, Function Index, The Karel Language, Top
+@example
+@group
+  DEFINE-NEW-INSTRUCTION <name> AS
+    <stmt>
+@end group
+@end example
+
+
+
+
+@node Extending Karel, Index, The Karel Language, Top
 @chapter Extending Karel
 
 @menu
 * Building applications::       
+* Error handlers::              
+* Memory Management::           
 * Robot API::                   
 * World API::                   
 * Engine API::                  
 @end menu
 
-@node Building applications, Robot API, Extending Karel, Extending Karel
+@node Building applications, Error handlers, Extending Karel, Extending Karel
 @section Building applications
 
-@node Robot API, World API, Building applications, Extending Karel
+@node Error handlers, Memory Management, Building applications, Extending Karel
+@section Error handlers
+
+@deftypefn {Error Handler} void ktr_err_nomem (size_t @var{size})
+Library function that is invoked when the Karel engine cannot allocate
+memory.  You can define your own no memory handler by defining your own
+error handlers and including them in the link command prior to libkarel.
+@end deftypefn
+
+@deftypefn {Error Handler} void ktr_err_fatal (char * @var{format}, @var{...})
+Library function that is invoked when the Karel engine has a fatal
+error.  The default implementation prints the arguments ala
+fprintf(stderr, @var{format}, @var{...}) and exits the program.  You can
+define your own fatal error handler by defining your own error handlers
+and including them in the link command prior to libkarel.
+@end deftypefn
+
+@deftypefn {Error Handler} void ktr_err_parse (char * @var{format}, @var{...})
+Library function that is invoked when the Karel parser has an error.
+The default implementation prints the arguments ala fprintf(stderr,
+@var{format}, @var{...}) and exits the program.  You can define your own
+parse error handler by defining your own error handlers and including
+them in the link command prior to libkarel.
+@end deftypefn
+
+
+
+@node Memory Management, Robot API, Error handlers, Extending Karel
+@section Memory Management
+
+@deftypefn {Memory Management} {void *} ktr_calloc (size_t @var{nmemb}, size_t @var{size})
+Allocates an array of @var{nmemb} elements, each of @var{size} bytes.
+Returns a pointer to the allocated memory, or NULL if the allocaiton failed.
+@end deftypefn
+
+
+@deftypefn {Memory Management} {void *} ktr_malloc (size_t @var{size})
+Allocates @var{size} bytes.  Returns a pointer to the allocated memory,
+or NULL if the allocaiton failed. 
+@end deftypefn
+
+@deftypefn {Memory Management} void ktr_free (void *@var{ptr});
+Frees memory previously allocated by @var{ktr_calloc}, @var{ktr_malloc},
+or @var{ktr_realloc}.
+@end deftypefn
+
+@deftypefn {Memory Management} {void *} ktr_realloc (void *@var{ptr}, size_t @var{size});
+Attempts to resize the memory block pointed to by @var{ptr}.  If
+@var{ptr} is NULL, the call is equivalent to @var{malloc(size)}.  If
+@var{size} is equal to zero, the call is equivalent to @var{free(ptr)}.
+Unless @var{ptr} is NULL, it must have been allocated by a previous call
+to @var{ktr_calloc} or @var{ktr_malloc}.  Returns a pointer to the new
+block of memory.  If the allocation fails, NULL is returned and the
+original block of memory is untouched.
+@end deftypefn
+
+
+
+
+@node Robot API, World API, Memory Management, Extending Karel
 @section Robot API
+
+@deftp Robot ktr_robot_t
+The robot data type.
+@end deftp
+
+@deftypefn Robot {ktr_robot_t *} ktr_robot_create (ktr_world_t *@var{world}, int @var{street}, int @var{avenue}, ktr_direction_t @var{dir}, int @var{n_beepers})
+Creates a new robot that lives in @var{world}.  The starting position is
+given as (@var{street}, @var{avenue}), facing direction @var{dir}.  The
+robot starts with @var{n_beepers} in his beeper bag.
+@end deftypefn
+
+@deftypefn Robot {void} ktr_robot_set_move_callback (ktr_robot_t *@var{r}, ktr_robot_move_callback_t @var{cb})
+Establishes the function to invoke whenever karel moves.
+@end deftypefn
+
+
+@deftypefn Robot {void} ktr_robot_set_turn_callback (ktr_robot_t *@var{r}, ktr_robot_turn_callback_t @var{cb})
+Establishes the function to invoke whenever karel turns.
+@end deftypefn
+
+
+@deftypefn Robot {void} ktr_robot_get_pos (ktr_robot_t *@var{r}, int *@var{street}, int *@var{avenue});
+Sets @var{street} and @var{avenue} to the coordinates of the given
+robot's (@var{r}) current intersection.
+@end deftypefn
+
+
+@deftypefn Robot {char *} ktr_robot_dir_to_string (ktr_direction_t @var{dir});
+Converts the given direction (@var{dir}) to a string for printing the
+robot's current direction.
+@end deftypefn
+
+
+
+
 
 @node World API, Engine API, Robot API, Extending Karel
 @section World API
 
+@deftp World ktr_world_t
+The world data type.
+@end deftp
+
+@deftypefn World {ktr_world_t *} ktr_world_create (int @var{n_streets}, int @var{n_avenues})
+Creates a new world of size @var{n_streets} by @var{n_avenues}.
+@end deftypefn
+
+@deftypefn World void ktr_world_add_ew_wall (ktr_world_t *@var{w}, int @var{north_of_street}, int @var{at_avenue}, int @var{length_to_east})
+Adds an east-west wall immediately north of @var{north_of_street},
+starting at @var{at_avenue}, and extending @var{length_to_east} blocks
+to the east.
+@end deftypefn
+
+@deftypefn World void ktr_world_add_ns_wall (ktr_world_t *@var{w}, int @var{at_street}, int @var{east_of_avenue}, int @var{length_to_north})
+Adds a north-south wall immediately east of @var{east_of_avenue},
+starting at @var{at_street}, and extending @var{length_to_north} blocks
+to the north.
+@end deftypefn
+
+@deftypefn World int ktr_world_check_ew_wall (ktr_world_t *@var{w}, int @var{north_of_street}, int @var{at_avenue})
+Returns 1 if there is an east-west wall immediately north of street
+@var{north_of_street} at avenue @var{at_avenue}.  Returns 0 otherwise.
+@end deftypefn
+
+
+@deftypefn World int ktr_world_check_ns_wall (ktr_world_t *@var{w}, int @var{at_street}, int @var{east_of_avenue})
+Returns 1 if there is an north-south wall immediately east of avenue
+@var{east_of_avenue} at street @var{at_street}.  Returns 0 otherwise.
+@end deftypefn
+
+
+@deftypefn World int ktr_world_check_beeper (ktr_world_t *@var{w}, int @var{street}, int @var{avenue})
+Returns 1 if there is a beeper at intersection
+(@var{street},@var{avenue}).  Returns 0 otherwise.
+@end deftypefn
+
+
+@deftypefn World int ktr_world_pick_beeper (ktr_world_t *@var{w}, int @var{street}, int @var{avenue})
+Decrements the number of beepers at intersection
+(@var{street},@var{avenue}).  Returns 0 if a beeper was successfully
+picked.  Returns -1 if there were no beepers to pick up.
+@end deftypefn
+
+
+@deftypefn World int ktr_world_put_beeper (ktr_world_t *@var{w}, int @var{street}, int @var{avenue})
+Increments the number of beepers at intersection
+(@var{street},@var{avenue}).  Returns 0.
+@end deftypefn
+
+
+
+
 @node Engine API,  , World API, Extending Karel
 @section Engine API
 
-@node    Function Index, Concept Index, Extending Karel, Top
-@comment node-name,    next,  previous,      up
-@unnumbered Function Index
-@printindex fn
+@deftypefn Engine {ktr_engine_t *} ktr_load_program (FILE *@var{in_file});
+Loads the karel program in the open file @var{in_file}.  Returns the
+resulting engine.  Errors are presently undetected.  This obviously
+needs work!
+@end deftypefn
 
-@node    Concept Index,  , Function Index, Top
+@c @node    Function Index, Concept Index, Extending Karel, Top
+@c @comment node-name,    next,  previous,      up
+@c @unnumbered Function Index
+@c @printindex fn
+
+@node    Index,  , Extending Karel, Top
 @comment node-name,    next,  previous,      up
-@unnumbered Concept Index
+@unnumbered Index
 
 @printindex cp
 
