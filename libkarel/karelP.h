@@ -11,9 +11,9 @@
 #define	RUN	3
 
 /* marks end of procedure or main block */
-#define	RETURN	(Inst) 0
+#define	RETURN	(ktr_instruction_t) 0
 
-#define DEF_INST(x) int x(ktr_robot_t *r)
+#define DEF_INST(x) int x(ktr_engine_t *e, ktr_robot_t *r)
 
 /*!
   @defined KTR_ERROR
@@ -32,13 +32,6 @@
  *----------------------------------------------------------------------*/
 
 /*!
-  @typedef Inst
-  @abstract A pseudo-compiled instruction.
-  @discussion The Karel execution engine is made up of these.
- */
-typedef	int (*Inst)(ktr_robot_t *);
-
-/*!
   @typedef ktr_keyword_t
   @discussion An association between a name and a YACC keyword id.
  */
@@ -53,7 +46,7 @@ typedef struct ktr_keyword {
  */
 typedef struct ktr_builtin {
   char *name;
-  Inst func;
+  ktr_instruction_t func;
   int type;
 } ktr_builtin_t;
 
@@ -106,79 +99,123 @@ Symbol *lookup(char *s);
  */
 void install(char *s);
 
-int yylex(void);			/* lexical analyzer */
+/*!
+  @function ktr_initlex
+  @discussion prepare the lexical analyzer
+ */
+void ktr_initlex(FILE *in_file, ktr_engine_t *engine);
 
+/*!
+  @function yylex
+  @discussion Lexical analyzer.
+ */
+int yylex(void);
+
+/*
+  system error: print error message and die
+*/
 void
-syserr(char *s, char *t);	/* system error: print error message and die */
+syserr(char *s, char *t);
 
-
+/*
+  print error message
+*/
 void
-severe(char *s, char *t);		/* print error message and die */
+err(char *s, char *t);
 
-
+/*
+  handle parser error
+*/
 void
-err(char *s, char *t);				/* print error message */
+yyerror(char *s);
 
+/*
+ */
+int ktr_lex_get_progp (void);
 
-void
-yyerror(char *s);				/* handle parser error */
+/*
+ */
+void ktr_lex_startaddr (int addr);
 
+/*
+  install one program instruction
+*/
+void ktr_lex_setcode(int addr, ktr_instruction_t n);
 
-DEF_INST(call);
-DEF_INST(loopexec);
-DEF_INST(condbranch);
-DEF_INST(branch);
-DEF_INST(ktr_vm_turnoff);
+/*
+  install next instruction
+*/
+void ktr_lex_code(ktr_instruction_t n);
 
-void initcode(void);
-void setcode(int addr, Inst n);		/* install one program instruction */
-void code(Inst n);			/* install next instruction */
-void codeint(int n);			/* install a int as next instruction */
-void setcodeint(int addr, int n);	/* install one int */
+/*
+  install a int as next instruction
+*/
+void ktr_lex_codeint(int n);
+
+/*
+  install one int
+*/
+void ktr_lex_setcodeint(int addr, int n);
+
+/*
+  install one program instruction
+*/
+void ktr_engine_setcode (ktr_engine_t *engine, int addr, ktr_instruction_t n);
+
+/*
+  install one int
+*/
+void ktr_engine_setcodeint (ktr_engine_t *engine, int addr, int n);
+
+/*
+  install next instruction
+*/
+void ktr_engine_code (ktr_engine_t *engine, ktr_instruction_t n);
+
+/*
+  install an int as next instruction
+*/
+void ktr_engine_codeint(ktr_engine_t *engine, int n);
 
 /*----------------------------------------------------------------------*
- *			   Karel Built-in tests                         *
+		     Program flow implementation
  *----------------------------------------------------------------------*/
-int ktr_robot_any_beepers_in_beeper_bag(ktr_robot_t *r);
-int ktr_robot_facing_east(ktr_robot_t *r);
-int ktr_robot_facing_north(ktr_robot_t *r);
-int ktr_robot_facing_south(ktr_robot_t *r);
-int ktr_robot_facing_west(ktr_robot_t *r);
-int ktr_robot_front_is_blocked(ktr_robot_t *r);
-int ktr_robot_front_is_clear(ktr_robot_t *r);
-int ktr_robot_left_is_blocked(ktr_robot_t *r);
-int ktr_robot_left_is_clear(ktr_robot_t *r);
-int ktr_robot_next_to_a_beeper(ktr_robot_t *r);
-int ktr_robot_no_beepers_in_beeper_bag(ktr_robot_t *r);
-int ktr_robot_not_facing_east(ktr_robot_t *r);
-int ktr_robot_not_facing_north(ktr_robot_t *r);
-int ktr_robot_not_facing_south(ktr_robot_t *r);
-int ktr_robot_not_facing_west(ktr_robot_t *r);
-int ktr_robot_not_next_to_a_beeper(ktr_robot_t *r);
-int ktr_robot_right_is_blocked(ktr_robot_t *r);
-int ktr_robot_right_is_clear(ktr_robot_t *r);
+
+DEF_INST(ktr_engine_call);
+DEF_INST(ktr_engine_loopexec);
+DEF_INST(ktr_engine_condbranch);
+DEF_INST(ktr_engine_branch);
+DEF_INST(ktr_engine_turnoff);
 
 /*----------------------------------------------------------------------*
- *			   Karel Built-in procedures                    *
+ 			   Karel Built-in tests
  *----------------------------------------------------------------------*/
-/*!
- */
-int ktr_robot_move(ktr_robot_t *r);
+DEF_INST(ktr_robot_any_beepers_in_beeper_bag);
+DEF_INST(ktr_robot_facing_east);
+DEF_INST(ktr_robot_facing_north);
+DEF_INST(ktr_robot_facing_south);
+DEF_INST(ktr_robot_facing_west);
+DEF_INST(ktr_robot_front_is_blocked);
+DEF_INST(ktr_robot_front_is_clear);
+DEF_INST(ktr_robot_left_is_blocked);
+DEF_INST(ktr_robot_left_is_clear);
+DEF_INST(ktr_robot_next_to_a_beeper);
+DEF_INST(ktr_robot_no_beepers_in_beeper_bag);
+DEF_INST(ktr_robot_not_facing_east);
+DEF_INST(ktr_robot_not_facing_north);
+DEF_INST(ktr_robot_not_facing_south);
+DEF_INST(ktr_robot_not_facing_west);
+DEF_INST(ktr_robot_not_next_to_a_beeper);
+DEF_INST(ktr_robot_right_is_blocked);
+DEF_INST(ktr_robot_right_is_clear);
 
-/*!
- */
-int ktr_robot_pickbeeper(ktr_robot_t *r);
+/*----------------------------------------------------------------------*
+ 			   Karel Built-in procedures
+ *----------------------------------------------------------------------*/
 
-/*!
- */
-int ktr_robot_putbeeper(ktr_robot_t *r);
-
-/*!
- */
-int ktr_robot_turnleft(ktr_robot_t *r);
-
-/*!
- */
-int ktr_robot_turnoff(ktr_robot_t *r);
+DEF_INST(ktr_robot_move);
+DEF_INST(ktr_robot_pickbeeper);
+DEF_INST(ktr_robot_putbeeper);
+DEF_INST(ktr_robot_turnleft);
 
 #endif /* __karelP_h */

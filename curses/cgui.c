@@ -106,6 +106,7 @@ main(int argc, char **argv)
   int c;
   char *prog_file = NULL;
   FILE *fp;
+  ktr_engine_t *engine;
   ktr_world_t *world;
   ktr_robot_t *robot;
 
@@ -119,9 +120,7 @@ main(int argc, char **argv)
   if ((fp = fopen(prog_file, "r")) == NULL)
     syserr("can't open file: ", prog_file);
 
-  ktr_initlex(fp);
-  yyparse();
-
+  engine = ktr_load_program (fp);
   world = ktr_world_create(5, 5);
   ktr_world_put_beeper(world, 3, 3);
   robot = ktr_robot_create(world, robot_st, robot_ave, robot_dir, 0);
@@ -142,7 +141,7 @@ main(int argc, char **argv)
   draw_world(world);
   draw_robot(robot_st, robot_ave, robot_dir);
   ktr_sleep(milli_sleep_time);
-  ktr_execute(robot, ktr_startaddr);
+  ktr_engine_execute(engine, robot);
 
   ktr_sleep(milli_sleep_time*4);
   echo();

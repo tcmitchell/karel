@@ -11,32 +11,31 @@ int	tokenid;			/* token number */
 int	linecount;			/* no. of lines in input */
 int	yyval;
 char	yytext[BUFSIZ];
-static	char	c;			/* character being handled */
 
-static FILE *fp = NULL;
+static FILE *ktr_lex_curfile = NULL;
+static char ktr_lex_curchar = ' ';
+ktr_engine_t *ktr_lex_engine = NULL;
 
 /*----------------------------------------------------------------------*
- *			       keywords                                 *
- *
+			       keywords
  *----------------------------------------------------------------------*/
 
 ktr_keyword_t keywords[] = {
-  { "AS", AS },
-  { "BEGIN", BEGIN },
+  { "AS",                     AS },
+  { "BEGIN",                  BEGIN },
   { "BEGINNING-OF-EXECUTION", BEGEXEC },
-  { "BEGINNING-OF-PROGRAM", BEGPROG },
+  { "BEGINNING-OF-PROGRAM",   BEGPROG },
   { "DEFINE-NEW-INSTRUCTION", DEFINST },
-  { "DO", DO },
-  { "ELSE", ELSE },
-  { "END", END },
-  { "END-OF-EXECUTION", ENDEXEC },
-  { "END-OF-PROGRAM", ENDPROG },
-  { "IF", IF },
-  { "ITERATE", ITERATE },
-  { "THEN", THEN },
-  { "TIMES", TIMES },
-  { "WHILE", WHILE },
-  { 0, 0 }
+  { "DO",                     DO },
+  { "ELSE",                   ELSE },
+  { "END",                    END },
+  { "END-OF-EXECUTION",       ENDEXEC },
+  { "END-OF-PROGRAM",         ENDPROG },
+  { "IF",                     IF },
+  { "ITERATE",                ITERATE },
+  { "THEN",                   THEN },
+  { "TIMES",                  TIMES },
+  { "WHILE",                  WHILE }
 };
 
 
@@ -44,78 +43,70 @@ ktr_keyword_t keywords[] = {
 
 ktr_builtin_t bltins[] = {
   { "any-beepers-in-beeper-bag", ktr_robot_any_beepers_in_beeper_bag, TEST },
-  { "facing-east", ktr_robot_facing_east, TEST },
-  { "facing-north", ktr_robot_facing_north, TEST },
-  { "facing-south", ktr_robot_facing_south, TEST },
-  { "facing-west", ktr_robot_facing_west, TEST },
-  { "front-is-blocked", ktr_robot_front_is_blocked, TEST },
-  { "front-is-clear", ktr_robot_front_is_clear, TEST },
-  { "left-is-blocked", ktr_robot_left_is_blocked, TEST },
-  { "left-is-clear", ktr_robot_left_is_clear, TEST },
-  { "move", ktr_robot_move, BLTIN },
-  { "next-to-a-beeper", ktr_robot_next_to_a_beeper, TEST },
-  { "no-beepers-in-beeper-bag", ktr_robot_no_beepers_in_beeper_bag, TEST },
-  { "not-facing-east", ktr_robot_not_facing_west, TEST },
-  { "not-facing-north", ktr_robot_not_facing_north, TEST },
-  { "not-facing-south", ktr_robot_not_facing_south, TEST },
-  { "not-facing-west", ktr_robot_not_facing_west, TEST },
-  { "not-next-to-a-beeper", ktr_robot_not_next_to_a_beeper, TEST },
-  { "pickbeeper", ktr_robot_pickbeeper, BLTIN },
-  { "putbeeper", ktr_robot_putbeeper, BLTIN },
-  { "right-is-blocked", ktr_robot_right_is_blocked, TEST },
-  { "right-is-clear", ktr_robot_right_is_clear, TEST },
-  { "turnleft", ktr_robot_turnleft, BLTIN },
-  { "turnoff", ktr_vm_turnoff, BLTIN },
-  { 0, 0, 0 }
+  { "facing-east",               ktr_robot_facing_east,               TEST },
+  { "facing-north",              ktr_robot_facing_north,              TEST },
+  { "facing-south",              ktr_robot_facing_south,              TEST },
+  { "facing-west",               ktr_robot_facing_west,               TEST },
+  { "front-is-blocked",          ktr_robot_front_is_blocked,          TEST },
+  { "front-is-clear",            ktr_robot_front_is_clear,            TEST },
+  { "left-is-blocked",           ktr_robot_left_is_blocked,           TEST },
+  { "left-is-clear",             ktr_robot_left_is_clear,             TEST },
+  { "move",                      ktr_robot_move,                      BLTIN },
+  { "next-to-a-beeper",          ktr_robot_next_to_a_beeper,          TEST },
+  { "no-beepers-in-beeper-bag",  ktr_robot_no_beepers_in_beeper_bag,  TEST },
+  { "not-facing-east",           ktr_robot_not_facing_west,           TEST },
+  { "not-facing-north",          ktr_robot_not_facing_north,          TEST },
+  { "not-facing-south",          ktr_robot_not_facing_south,          TEST },
+  { "not-facing-west",           ktr_robot_not_facing_west,           TEST },
+  { "not-next-to-a-beeper",      ktr_robot_not_next_to_a_beeper,      TEST },
+  { "pickbeeper",                ktr_robot_pickbeeper,                BLTIN },
+  { "putbeeper",                 ktr_robot_putbeeper,                 BLTIN },
+  { "right-is-blocked",          ktr_robot_right_is_blocked,          TEST },
+  { "right-is-clear",            ktr_robot_right_is_clear,            TEST },
+  { "turnleft",                  ktr_robot_turnleft,                  BLTIN },
+  { "turnoff",                   ktr_engine_turnoff,                  BLTIN }
 };
 
 /*----------------------------------------------------------------------*
  *----------------------------------------------------------------------*/
+/*
+  get a character, checking for EOF
+*/
 static char
-egetc(FILE *fp)			/* get a character, checking for EOF */
+egetc(FILE *fp)
 {
   char	c;
 
   if ((c = getc(fp)) == EOF)
     {
-      severe("unexpected end of program", NULL);
+      ktr_fatal_err ("unexpected end of program at line %d\nUnterminated comment?", linecount);
+      exit (1);
       return((char) 0);		/* Never executed -- keep gcc happy */
     }
   else
     return(c);
 }
 
+/*
+  skip over white space (tabs, etc.)
+*/
 static void
-skipwhite(FILE *fp)		/* skip over white space (tabs, etc.) */
+skipwhite(FILE *fp)
 {
-  while (isspace((int) c))
+  while (isspace((int) ktr_lex_curchar))
     {
-      if (c == '\n')
+      if (ktr_lex_curchar == '\n')
 	linecount++;
 
-      c = (char) getc(fp);
+      ktr_lex_curchar = (char) getc(fp);
     }
 }
 
-void
-ktr_initlex(FILE *in_file)			/* prepare the lexical analyzer */
-{
-  /* count the number of keywords */
-  for (nkeys = 0; keywords[nkeys].name; nkeys++)
-    ;
-
-  /* count the number of builtins */
-  for (nbltins = 0; bltins[nbltins].name; nbltins++)
-    ;
-
-  /* set the current character */
-  c = ' ';
-
-  fp = in_file;
-}
-
-int
-getkeyid(char *s)	/* find s in keyword array; return -1 if not found */
+/*
+  find s in keyword array; return -1 if not found.
+*/
+static int
+getkeyid(char *s)
 {
   int i;
 
@@ -126,106 +117,119 @@ getkeyid(char *s)	/* find s in keyword array; return -1 if not found */
   return -1;
 }
 
-int
-getkeyid_orig(char *s)	/* find s in keyword array; return -1 if not found */
+/*
+  find s in builtin array; return -1 if not found.
+*/
+static int
+getbltinid(char *s)
 {
-  int guess = 0;
-  int cmp, lower, upper, found;
+  int i;
 
-  /* use a binary search */
-  found = lower = 0;
-  upper = nkeys;
-  while (lower <= upper && !found)
-    {
-      if (!(cmp = strcmp(s, keywords[guess=(lower+upper)/2].name)))
-	{
-	  found = 1;
-	}
-      else
-	{
-	  if (cmp > 0)
-	    {
-	      lower = guess + 1;
-	    }
-	  else
-	    {
-	      upper = guess - 1;
-	    }
-	}
-    }
-  return(found ? guess : -1);
-}
-
-
-/* this is sort of redundant, but I didn't want to pass two kinds of	*/
-/* arrays to the same search routine					*/
-
-int
-getbltinid(char *s)	/* find s in keyword array; return -1 if not found */
-{
-  int i = 0;
   for (i=0; i<nbltins; i++)
-    {
-      if (strcmp(s, bltins[i].name) == 0)
-	{
-	  return i;
-	}
-    }
+    if (strcmp(s, bltins[i].name) == 0)
+      return i;
+
   return -1;
 }
 
-int
-getbltinid_orig(char *s) /* find s in built-in array; return -1 if not found */
+/*
+  Prepare the lexical analyzer.
+*/
+void
+ktr_initlex(FILE *in_file, ktr_engine_t *engine)
 {
-  int guess = 0;
-  int cmp, lower, upper, found;
+  nkeys = (sizeof (keywords) / sizeof(keywords[0]));
+  nbltins = (sizeof (bltins) / sizeof(bltins[0]));
 
-  /* use a binary search */
-  found = lower = 0;
-  upper = nbltins;
-  while (lower <= upper && !found)
-    {
-      if (!(cmp = strcmp(s, bltins[guess=(lower+upper)/2].name)))
-	{
-	  found = 1;
-	}
-      else
-	{
-	  if (cmp > 0)
-	    {
-	      lower = guess + 1;
-	    }
-	  else
-	    {
-	      upper = guess - 1;
-	    }
-	}
-    }
-  return(found ? guess : -1);
+  ktr_lex_curfile = in_file;
+  ktr_lex_engine = engine;
 }
 
+/*
+ */
 int
-yylex(void)				/* lexical analyzer */
+ktr_lex_get_progp (void)
 {
-  int len;				/* length of word	*/
-  int n;				/* temporary		*/
+  return ktr_lex_engine->progp;
+}
 
-  skipwhite(fp);
-  while (c == '{')
-    {				/* skip over comment */
-      while (c != '}')
-	c = egetc(fp);
-      c = getc(fp);
-      skipwhite(fp);
+/*
+ */
+void
+ktr_lex_startaddr (int addr)
+{
+  ktr_lex_engine->startaddr = addr;
+}
+
+/*
+  install one program instruction
+*/
+void
+ktr_lex_setcode (int addr, ktr_instruction_t n)
+{
+  ktr_engine_setcode (ktr_lex_engine, addr, n);
+}
+
+/*
+  install one int
+*/
+void
+ktr_lex_setcodeint (int addr, int n)
+{
+  ktr_engine_setcodeint (ktr_lex_engine, addr, n);
+}
+
+/*
+  install next instruction
+*/
+void
+ktr_lex_code (ktr_instruction_t n)
+{
+  ktr_engine_code (ktr_lex_engine, n);
+}
+
+/*
+  install an int as next instruction
+*/
+void
+ktr_lex_codeint(int n)
+{
+  ktr_engine_codeint (ktr_lex_engine, n);
+}
+
+
+
+/*
+  Lexical analyzer.
+*/
+int
+yylex(void)
+{
+  int len;				/* length of word */
+  int n;
+
+  skipwhite(ktr_lex_curfile);
+  while (ktr_lex_curchar == '{')
+    {
+      /* skip over comment */
+      while (ktr_lex_curchar != '}')
+	ktr_lex_curchar = egetc(ktr_lex_curfile);
+      ktr_lex_curchar = getc(ktr_lex_curfile);
+      skipwhite(ktr_lex_curfile);
     }
   len = 0;
-  while (isalnum((int) c) || c == '-') 		/* read one word */
+
+  /* read one word */
+  while (isalnum((int) ktr_lex_curchar) || ktr_lex_curchar == '-')
     {
-      yytext[len++] = c;
-      c = (char) getc(fp);
+      yytext[len++] = ktr_lex_curchar;
+      ktr_lex_curchar = (char) getc(ktr_lex_curfile);
     }
-  yytext[len] = '\0';			/* mark end of word */
-  if (len > 0 && c != EOF)
+
+  /* mark end of word */
+  yytext[len] = '\0';
+
+  if (len > 0 && ktr_lex_curchar != EOF)
     {
       tokenid = getkeyid(yytext);
       if (tokenid >= 0)
@@ -241,8 +245,8 @@ yylex(void)				/* lexical analyzer */
     }
   else
     {
-      yyval = c;
-      c = getc(fp);
+      yyval = ktr_lex_curchar;
+      ktr_lex_curchar = getc(ktr_lex_curfile);
     }
   return(yyval);
 }

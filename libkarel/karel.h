@@ -9,8 +9,30 @@
 */
 
 /*----------------------------------------------------------------------*
+			       Defines
+ *----------------------------------------------------------------------*/
+
+/*!
+  @defined MAX_PROG
+  @discussion The maximum size of a Karel program.
+ */
+#define MAX_PROG 500
+
+/*----------------------------------------------------------------------*
 			       Typedefs
  *----------------------------------------------------------------------*/
+
+/*!
+  @enum ktr_engine_state_t
+  @discussion All possible states of a Karel engine.
+*/
+typedef enum {
+  KTR_ENGINE_EMPTY,
+  KTR_ENGINE_COMPILING,
+  KTR_ENGINE_READY,
+  KTR_ENGINE_RUNNING,
+  KTR_ENGINE_DONE
+} ktr_engine_state_t;
 
 /*!
   @typedef ktr_direction_t
@@ -84,13 +106,65 @@ typedef struct ktr_robot {
   ktr_robot_turn_callback_t turn_cb;
 } ktr_robot_t;
 
+struct ktr_engine;
+
+/*!
+  @typedef ktr_instruction_t
+  @discussion A pseudo-compiled instruction.
+ */
+typedef	int (*ktr_instruction_t)(struct ktr_engine *, ktr_robot_t *);
+
+/*!
+  @typedef Inst
+  @discussion Backwards compatibility.  Deprecated.
+ */
+typedef ktr_instruction_t Inst;
+
+/*!
+  @typedef ktr_engine_t
+  @discussion The Karel execution engine object.
+ */
+typedef struct ktr_engine {
+  ktr_instruction_t prog[MAX_PROG];
+  int progp;			/* The program pointer */
+  int pc;			/* The execution pointer */
+  int startaddr;		/* The location of main */
+  int flag;			/* A flag to hold logic test results */
+  ktr_engine_state_t state;	/* The current state of the engine */
+} ktr_engine_t;
+
 /*----------------------------------------------------------------------*
-			   Global Variables
+			    Error handlers
  *----------------------------------------------------------------------*/
+void ktr_nomem_err (size_t size);
 
-/* We need to lose this from the public API! --tcm 27-Apr-2000 */
+void ktr_fatal_err (char *string, ...);
 
-extern int ktr_startaddr;
+/*----------------------------------------------------------------------*
+		      Memory management routines
+ *----------------------------------------------------------------------*/
+/*
+  You can override these, but if you override one, you must override
+  them all.
+*/
+void *ktr_calloc (size_t nmemb, size_t size);
+
+/*
+  Allocates size bytes of memory.  See man malloc.
+*/
+void *ktr_malloc (size_t size);
+
+/*
+  Frees memory at ptr.  See man free.
+ */
+void ktr_free (void *ptr);
+
+/*
+  Reallocates memory at ptr.  See man realloc.
+ */
+void *ktr_realloc (void *ptr, size_t size);
+
+
 
 /*----------------------------------------------------------------------*
 		Functions to manipulate Karel's World
@@ -125,18 +199,25 @@ ktr_world_pick_beeper(ktr_world_t *w, int street, int avenue);
 int
 ktr_world_put_beeper(ktr_world_t *w, int street, int avenue);
 
-/*
- * Creates a new robot at the given position and orientation in the
- * given world.
+/*!
+  @function ktr_robot_create
+  @discussion Creates a new robot at the given position and orientation in the
+  given world.
  */
 ktr_robot_t *
 ktr_robot_create(ktr_world_t *world,
 	       int street, int avenue,
 	       ktr_direction_t dir, int n_beepers);
 
+/*!
+  @function ktr_set_move_callback
+ */
 void
 ktr_robot_set_move_callback(ktr_robot_t *r, ktr_robot_move_callback_t cb);
 
+/*!
+  @function ktr_set_move_callback
+ */
 void
 ktr_robot_set_turn_callback(ktr_robot_t *r, ktr_robot_turn_callback_t cb);
 
@@ -145,21 +226,14 @@ ktr_robot_set_turn_callback(ktr_robot_t *r, ktr_robot_turn_callback_t cb);
  */
 void ktr_robot_get_pos(ktr_robot_t *r, int *street, int *avenue);
 
+/*!
+  @function ktr_robot_dir_to_string
+ */
 char *ktr_robot_dir_to_string(ktr_direction_t dir);
 
 /*!
-  @function ktr_execute
-  @discussion Execute the Karel machine.
-  @param r A robot.
-  @param n the instruction to start from (usually 'ktr_startaddr').
-*/
-int ktr_execute(ktr_robot_t *r, int n);
-
-/*!
-  @function ktr_initlex
-  @discussion prepare the lexical analyzer
+  @function ktr_load_program
  */
-void ktr_initlex(FILE *in_file);
-
+ktr_engine_t * ktr_load_program (FILE *in_file);
 
 #endif /*__karel_h */

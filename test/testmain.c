@@ -55,6 +55,7 @@ main(int argc, char **argv)
   int c;
   char *prog_file = NULL;
   FILE *fp;
+  ktr_engine_t *engine;
   ktr_world_t *world;
   ktr_robot_t *robot;
 
@@ -68,15 +69,13 @@ main(int argc, char **argv)
   if ((fp = fopen(prog_file, "r")) == NULL)
     syserr("can't open file: ", prog_file);
 
-  ktr_initlex(fp);
-  yyparse();
-
+  engine = ktr_load_program (fp);
   world = ktr_world_create(5, 5);
   robot = ktr_robot_create(world, 4, 2, KTR_NORTH, 5);
   ktr_robot_set_move_callback(robot, handle_robot_move_event);
   ktr_robot_set_turn_callback(robot, handle_robot_turn_event);
   
-  ktr_execute(robot, ktr_startaddr);
+  ktr_engine_execute(engine, robot);
 
   return 0;
 }

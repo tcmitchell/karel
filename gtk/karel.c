@@ -34,6 +34,7 @@ static int robot_st = 3;
 static int robot_ave = 4;
 static ktr_direction_t robot_dir = KTR_NORTH;
 static int milli_sleep_time = 500;
+static ktr_engine_t *the_engine;
 static ktr_world_t *the_world;
 static ktr_robot_t *the_robot;
 
@@ -406,7 +407,7 @@ quit ()
 static void
 gtk_karel_execute ()
 {
-  ktr_execute(the_robot, ktr_startaddr);
+  ktr_engine_execute(the_engine, the_robot);
 }
 
 int
@@ -433,9 +434,7 @@ main (int argc, char *argv[])
       exit(1);
     }
 
-  ktr_initlex(fp);
-  yyparse();
-
+  the_engine = ktr_load_program(fp);
   the_world = ktr_world_create(5, 5);
   ktr_world_put_beeper(the_world, 3, 3);
   the_robot = ktr_robot_create(the_world, robot_st, robot_ave, robot_dir, 0);

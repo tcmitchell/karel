@@ -21,18 +21,6 @@ syserr(char *s, char *t)	/* system error: print error message and die */
 }
 
 void
-severe(char *s, char *t)		/* print error message and die */
-{
-  fprintf(stderr, "%s", s);
-  if (t)
-    {
-      fprintf(stderr, " %s", t);
-    }
-  fprintf(stderr, "\ncannot recover from previous errors -- QUIT\n");
-  exit(1);
-}
-
-void
 err(char *s, char *t)				/* print error message */
 {
 /*    errfound = 1; */

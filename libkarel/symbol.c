@@ -24,7 +24,7 @@ install(char *s)
   sp = (Symbol *) emalloc(sizeof(Symbol));
   sp->name = emalloc(strlen(s) + 1);
   strcpy(sp->name, s);
-  sp->addr = progp;
+  sp->addr = ktr_lex_get_progp();
   sp->next = symtab;
   symtab = sp;
 }

@@ -5,8 +5,8 @@
 #include	"karel.h"
 #include	"karelP.h"
 
-char	instname[BUFSIZ];
-Symbol	*sp;
+  char instname[BUFSIZ];
+  Symbol *sp;
 
 %}
 
@@ -25,8 +25,8 @@ Symbol	*sp;
 
 
 prog		: BEGPROG deflist begexec stmtlist ENDEXEC ENDPROG {
-			ktr_startaddr = $3;
-			code(RETURN);
+			ktr_lex_startaddr($3);
+			ktr_lex_code(RETURN);
 		  }
 		| prog error
 			{ yyerrok; }
@@ -35,7 +35,7 @@ prog		: BEGPROG deflist begexec stmtlist ENDEXEC ENDPROG {
 begexec		: BEGEXEC {
 			strcpy(instname, "");
 			fprintf(stderr, "main block:\n");
-			$$ = progp;
+			$$ = ktr_lex_get_progp ();
 		  }
 		;
 
@@ -45,7 +45,7 @@ deflist		: def
 
 def		: /* nothing */
 		| definst AS stmt
-			{ code(RETURN); }
+			{ ktr_lex_code(RETURN); }
 		;
 
 definst		: DEFINST NAME {
@@ -66,23 +66,23 @@ stmtlist	: stmt
 
 stmt		: BEGIN stmtlist END
 		| IF logictest THEN stmt {
-			setcode($2 + 1, condbranch);
-			setcodeint($2 + 2, progp);
+			ktr_lex_setcode($2 + 1, ktr_engine_condbranch);
+			ktr_lex_setcodeint($2 + 2, ktr_lex_get_progp ());
 		  }
 		| IF logictest THEN stmt else stmt {
-			setcode($2 + 1, condbranch);
-			setcodeint($2 + 2, $5 + 1);
-			setcodeint($5, progp);
+			ktr_lex_setcode($2 + 1, ktr_engine_condbranch);
+			ktr_lex_setcodeint($2 + 2, $5 + 1);
+			ktr_lex_setcodeint($5, ktr_lex_get_progp ());
 		  }
 		| iterate TIMES stmt {
-			code(RETURN);
-			setcodeint($1, progp);
+			ktr_lex_code(RETURN);
+			ktr_lex_setcodeint($1, ktr_lex_get_progp ());
 		  }
 		| WHILE logictest DO stmt {
-			setcode($2 + 1, condbranch);
-			setcodeint($2 + 2, progp + 2);
-			code(branch);
-			codeint($2);
+			ktr_lex_setcode($2 + 1, ktr_engine_condbranch);
+			ktr_lex_setcodeint($2 + 2, ktr_lex_get_progp () + 2);
+			ktr_lex_code(ktr_engine_branch);
+			ktr_lex_codeint($2);
 		  }
 		| NAME {
 			if ((sp = lookup(yytext)) == (Symbol *) 0)
@@ -92,24 +92,24 @@ stmt		: BEGIN stmtlist END
 					err("recursive procedure call:",
 								yytext);
 				else {
-					code(call);
-					codeint(sp->addr);
+					ktr_lex_code(ktr_engine_call);
+					ktr_lex_codeint(sp->addr);
 				}
 			}
 		  }
 		| BLTIN	{
 			if (strcmp(yytext, "turnoff") == 0)
 				gotturnoff = 1;
-			code(bltins[tokenid].func);
+			ktr_lex_code(bltins[tokenid].func);
 		  }
 		| error
 		;
 
 logictest	: TEST {
-			$$ = progp;
-			code(bltins[tokenid].func);
-			codeint(0);	/* leave room for branch	*/
-			codeint(0);	/* instruction and address	*/
+			$$ = ktr_lex_get_progp ();
+			ktr_lex_code(bltins[tokenid].func);
+			ktr_lex_codeint(0);	/* leave room for branch	*/
+			ktr_lex_codeint(0);	/* instruction and address	*/
 		  }
 		| NAME
 			{ err("invalid logical test:", yytext); }
@@ -118,15 +118,15 @@ logictest	: TEST {
 		;
 
 else		: ELSE {
-			code(branch);
-			$$ = progp;
-			codeint(0);
+			ktr_lex_code(ktr_engine_branch);
+			$$ = ktr_lex_get_progp ();
+			ktr_lex_codeint(0);
 		};
 
 iterate		: ITERATE NUMBER {
-			code(loopexec);
-			codeint(atoi(yytext));
-			$$ = progp;
-			codeint(0);
+			ktr_lex_code(ktr_engine_loopexec);
+			ktr_lex_codeint(atoi(yytext));
+			$$ = ktr_lex_get_progp ();
+			ktr_lex_codeint(0);
 		  }
 		;
