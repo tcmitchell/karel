@@ -256,6 +256,19 @@ ktr_world_read (FILE *fp)
 	  beepers = atoi (strtok (NULL, " "));
 /*  	  printf ("Defined robot at %d,%d, facing %d, with %d beepers\n", */
 /*  		  st, ave, dir, beepers); */
+	  if (world == NULL)
+	    {
+	      fprintf (stderr,
+		       "Commands precede world definition at line %d\n",
+		       line_num);
+	    }
+	  else
+	    {
+	      world->robot_ave = ave;
+	      world->robot_st = st;
+	      world->robot_direction = dir;
+	      world->robot_beepers = beepers;
+	    }
 	}
       else if (strncasecmp(token, "wall", 4) == 0)
 	{
