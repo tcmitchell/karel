@@ -13,4 +13,10 @@ Building this software will yield the following files and executables:
   karel.h      Header file for libkarel.a for building your own GUIs
 
 
+To try out Karel, execute the following:
 
+prompt$ curses/karelc samples/maze.k
+
+or, if you have gtk:
+
+prompt$ gtk/karelg samples/maze.k
