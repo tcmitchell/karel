@@ -46,7 +46,7 @@ ktr_calloc(size_t nmemb, size_t size)
     }
   else if ((val = calloc(nmemb, size)) == NULL)
     {
-      ktr_nomem_err (nmemb * size);
+      ktr_err_nomem (nmemb * size);
     }
   return (val);
 }
@@ -65,7 +65,7 @@ ktr_malloc(size_t size)
     }
   else if ((val = malloc(size)) == NULL)
     {
-      ktr_nomem_err (size);
+      ktr_err_nomem (size);
     }
   return (val);
 }
@@ -97,7 +97,7 @@ ktr_realloc(void *ptr, size_t size)
     }
   if (val == NULL)
     {
-      ktr_nomem_err (size);
+      ktr_err_nomem (size);
     }
   return (val);
 }

@@ -1,3 +1,24 @@
+/*
+  The Karel parser description for bison/yacc.
+  Copyright (C) 2000 Tom Mitchell
+
+  This file is part of Karel.
+
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License
+  as published by the Free Software Foundation; either version 2
+  of the License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*/
+
 %{
 
 #include	<stdio.h>
@@ -54,9 +75,9 @@ definst		: DEFINST NAME {
 			ktr_symbol_install(instname);
 		  }
 		| DEFINST BLTIN
-			{ ktr_parse_err ("tried to redefine primitive instruction \"%s\" at line %d.", yytext, ktr_lex_linecount ()); }
+			{ ktr_err_parse ("tried to redefine primitive instruction \"%s\" at line %d.", yytext, ktr_lex_linecount ()); }
 		| DEFINST TEST
-			{ ktr_parse_err ("tried to redefine logical test \"%s\" at line %d.", yytext, ktr_lex_linecount ()); }
+			{ ktr_err_parse ("tried to redefine logical test \"%s\" at line %d.", yytext, ktr_lex_linecount ()); }
 		;
 
 stmtlist	: stmt
@@ -85,11 +106,11 @@ stmt		: BEGIN stmtlist END
 		  }
 		| NAME {
 			if ((sp = ktr_symbol_lookup(yytext)) == (ktr_symbol_t *) 0)
-			  ktr_parse_err ("symbol \"%s\" undefined at line %d.",
+			  ktr_err_parse ("symbol \"%s\" undefined at line %d.",
 					 yytext, ktr_lex_linecount ());
 			else {
 			  if (strcmp(yytext, instname) == 0)
-			    ktr_parse_err ("recursive procedure call %s at line %d.",
+			    ktr_err_parse ("recursive procedure call %s at line %d.",
 					  yytext, ktr_lex_linecount ());
 				else {
 					ktr_lex_code(ktr_engine_call);
@@ -112,10 +133,10 @@ logictest	: TEST {
 			ktr_lex_codeint(0);	/* instruction and address	*/
 		  }
 		| NAME
-			{ ktr_parse_err ("invalid logical test \"%s\" at %d",
+			{ ktr_err_parse ("invalid logical test \"%s\" at %d",
 					 yytext, ktr_lex_linecount ()); }
 		| BLTIN
-			{ ktr_parse_err ("invalid logical test \"%s\" at %d",
+			{ ktr_err_parse ("invalid logical test \"%s\" at %d",
 					 yytext, ktr_lex_linecount ()); }
 		;
 

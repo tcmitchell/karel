@@ -33,7 +33,7 @@
 
 /* VARARGS */
 void
-ktr_fatal_err (char *string, ...)
+ktr_err_fatal (char *string, ...)
 {
   va_list args;
   va_start (args, string);

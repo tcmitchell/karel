@@ -1,3 +1,24 @@
+/*
+  The Karel lexical analyzer.
+  Copyright (C) 2000 Tom Mitchell
+
+  This file is part of Karel.
+
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License
+  as published by the Free Software Foundation; either version 2
+  of the License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*/
+
 #include	<stdio.h>
 #include	<ctype.h>
 #include	"karel.h"
@@ -79,7 +100,7 @@ egetc(FILE *fp)
 
   if ((c = getc(fp)) == EOF)
     {
-      ktr_fatal_err ("unexpected end of program at line %d\nUnterminated comment?", linecount);
+      ktr_err_fatal ("unexpected end of program at line %d\nUnterminated comment?", linecount);
       exit (1);
       return((char) 0);		/* Never executed -- keep gcc happy */
     }
@@ -141,7 +162,7 @@ getbltinid(char *s)
   Prepare the lexical analyzer.
 */
 void
-ktr_initlex(FILE *in_file, ktr_engine_t *engine)
+ktr_lex_init(FILE *in_file, ktr_engine_t *engine)
 {
   nkeys = (sizeof (keywords) / sizeof(keywords[0]));
   nbltins = (sizeof (bltins) / sizeof(bltins[0]));

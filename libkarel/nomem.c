@@ -23,15 +23,15 @@
 #include "karelP.h"
 
 void
-ktr_nomem_err(size_t size)
+ktr_err_nomem(size_t size)
 {
   if (size > 0)
     {
-      ktr_fatal_err ("virtual memory exhausted: can't allocate %ld bytes.",
+      ktr_err_fatal ("virtual memory exhausted: can't allocate %ld bytes.",
 		     (long) size);
     }
   else
     {
-      ktr_fatal_err ("virtual memory exhausted.");
+      ktr_err_fatal ("virtual memory exhausted.");
     }
 }

@@ -1,46 +1,34 @@
+GPL in code
+
+good comments using either Doc++ or HeaderDoc.
+
+error checking of karel program instruction return values
+
+error checking in code
+
+GNU coding standards
+
+Robot death depiction on collisions (event?)
+
+world events to handle putbeeper/pickbeeper operations
+
 file/on-disk representation of a world
 
-libkarel
-
-unified header file
-
-directory organization
-
-autoconf
-
-automake
+unify gtk/curses interface to handle X/no-X situations?
 
 world editor -- curses
 
 world editor -- gtk
 
-unify gtk/curses interface to handle X/no-X situations?
+support for adding new builtin functions
 
-world events to handle putbeeper/pickbeeper operations
 
-Robot death depiction on collisions (event?)
+#----------------------------------------------------------------------
+#			      Wish List
+#----------------------------------------------------------------------
 
-GPL in code
-
-error checking in code
-
-error checking of karel program instruction return values
-
-consistently name externally visible functions/variables
-use karel_ for all libkarel external functions/variables
-
-have a karel_load_program() function that returns an instruction set
-for execution.
-
-14 char file names
-
-GNU coding standards
-
-prioritize to-do list
-
-make yy functions/vars have karel_ ahead of them for incorporation
+make yy functions/vars have ktr_ ahead of them for incorporation
 into programs that also use bison/yacc
 
 explore the use of flex for the lexer
 
-support for adding new builtin functions

@@ -118,7 +118,7 @@ main(int argc, char **argv)
       prog_file = argv[optind];
 
   if ((fp = fopen(prog_file, "r")) == NULL)
-    ktr_fatal_err("can't open file %s", prog_file);
+    ktr_err_fatal("can't open file %s", prog_file);
 
   engine = ktr_load_program (fp);
   world = ktr_world_create(5, 5);

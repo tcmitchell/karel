@@ -61,8 +61,8 @@ ktr_load_program (FILE *in_file)
   in_file = in_file;
   engine = ktr_engine_create ();
 
-  ktr_initlex(in_file, engine);
-  yyparse();
+  ktr_lex_init (in_file, engine);
+  yyparse ();
 
   return engine;
 }
@@ -130,7 +130,7 @@ ktr_engine_code (ktr_engine_t *engine, ktr_instruction_t n)
 {
   if (engine->progp >= KTR_MAX_PROG)
     {
-      ktr_fatal_err ("program too big");
+      ktr_err_fatal ("program too big");
       exit (1);
     }
   else
