@@ -1,87 +1,147 @@
 #ifndef __karel_h
 #define __karel_h
 
-#include <stdio.h>
-#include "error.h"
-#include "robot.h"
+#include <stdio.h>		/* for FILE* in initlex */
 
-/* file name suffixes */
-#define	PROGSUFFIX	"k"
-#define	SCRSUFFIX	"scr"
+/*!
+ */
+typedef enum {
+  K_NORTH = 247,
+  K_EAST,
+  K_SOUTH,
+  K_WEST
+} k_direction_t;
 
-/* interpreter states */
-#define	OFF	0
-#define	COMPILE	1
-#define	EDIT	2
-#define	RUN	3
+/*----------------------------------------------------------------------*
+ *			Structure Definitions                           *
+ *----------------------------------------------------------------------*/
 
-#define DEF_INST(x) int x(k_robot_t *r)
+/*!
+ */
+typedef struct corner {
+  int n_beepers;
+  int has_wall_north;
+  int has_wall_east;
+  int has_wall_south;
+  int has_wall_west;
+} k_corner_t;
 
-typedef	int (*Inst)(k_robot_t *);	/* pseudo-compiled instruction */
+/*!
+ */
+typedef struct world {
+  int n_streets;
+  int n_avenues;
+  k_corner_t ***corners;
+} k_world_t;
 
-/* marks end of procedure or main block */
-#define	RETURN	(Inst) 0
+/*!
+ */
+typedef struct k_robot_move_event {
+  int old_street;
+  int old_avenue;
+  int new_street;
+  int new_avenue;
+} k_robot_move_event_t;
 
-typedef struct	Bltintype {		/* built-in procedure entry */
-	char	*name;
-	Inst	func;
-	int	type;
-} Bltintype;
+/*!
+ */
+typedef struct k_robot_turn_event {
+  k_direction_t old_direction;
+  k_direction_t new_direction;
+} k_robot_turn_event_t;
 
-/* in main.c */
-extern int nflg;
-extern int state;
-extern void screrror(char *s);		/* reset terminal modes, die */
-extern char *progname;
-extern char basename[];
+/*!
+ */
+typedef	void (*k_robot_move_callback_t)(k_robot_move_event_t *);
+typedef	void (*k_robot_turn_callback_t)(k_robot_turn_event_t *);
 
+/*!
+ */
+typedef struct k_robot {
+  int street;
+  int avenue;
+  int n_beepers;
+  k_direction_t dir;
+  k_world_t *world;
+  k_robot_move_callback_t move_cb;
+  k_robot_turn_callback_t turn_cb;
+} k_robot_t;
 
-/* in words.h */
-extern	Bltintype	bltins[];
+/*----------------------------------------------------------------------*
+			   Global Variables
+ *----------------------------------------------------------------------*/
 
-/* in klex.c */
-extern int nkeys, gotsemcolon, gotturnoff, linecount, tokenid, yyval;
+/* We need to lose this from the public API! --tcm 27-Apr-2000 */
+
+/*!
+ */
+extern int startaddr;
+
+/*----------------------------------------------------------------------*
+		Functions to manipulate Karel's World
+ *----------------------------------------------------------------------*/
+k_world_t *
+k_world_create(int n_streets, int n_avenues);
+
+void
+k_world_add_ew_wall(k_world_t *w,
+		    int north_of_street,
+		    int at_avenue,
+		    int length_to_east);
+
+void
+k_world_add_ns_wall(k_world_t *w,
+		    int at_street,
+		    int east_of_avenue,
+		    int length_to_north);
+
+int
+k_world_check_ew_wall(k_world_t *w, int north_of_street, int at_avenue);
+
+int
+k_world_check_ns_wall(k_world_t *w, int at_street, int east_of_avenue);
+
+int
+k_world_check_beeper(k_world_t *w, int street, int avenue);
+
+int
+k_world_pick_beeper(k_world_t *w, int street, int avenue);
+
+int
+k_world_put_beeper(k_world_t *w, int street, int avenue);
+
+/*
+ * Creates a new robot at the given position and orientation in the
+ * given world.
+ */
+k_robot_t *
+k_robot_create(k_world_t *world,
+	       int street, int avenue,
+	       k_direction_t dir, int n_beepers);
+
+void
+k_robot_set_move_callback(k_robot_t *r, k_robot_move_callback_t cb);
+
+void
+k_robot_set_turn_callback(k_robot_t *r, k_robot_turn_callback_t cb);
+
+/*!
+ */
+void k_robot_get_pos(k_robot_t *r, int *street, int *avenue);
+
+char *k_robot_dir_to_string(k_direction_t dir);
+
+/*!
+  @function execute
+  @discussion Execute the Karel machine.
+  @param r A robot.
+  @param n the instruction to start from (usually 'startaddr').
+*/
+int execute(k_robot_t *r, int n);
+
 extern int yylex(void);			/* lexical analyzer */
-extern char yytext[];
+
 void initlex(FILE *in_file);		/* prepare the lexical analyzer */
 
-
-/* in code.c */
-extern int progp, startaddr;
-extern void initcode(void);
-void setcode(int addr, Inst n);		/* install one program instruction */
-void code(Inst n);			/* install next instruction */
-extern void anybeepers(), facingeast(), facingnorth(), facingsouth();
-extern void facingwest(), frontblocked(), frontclear(), leftblocked();
-extern void leftclear(), nexttobeeper(), nobeepers();
-extern void notfacingeast(), notfacingnorth(), notfacingsouth(), notfacingwest();
-extern void notnexttobeeper(), rightblocked();
-extern void rightclear(), turnleft(), turnoff();
-extern void bltin();
-void codeint(int n);			/* install a int as next instruction */
-void setcodeint(int addr, int n);	/* install one int */
-
-int execute(k_robot_t *r, int n);		/* execute machine */
-DEF_INST(call);
-DEF_INST(loopexec);
-DEF_INST(condbranch);
-DEF_INST(branch);
-DEF_INST(k_vm_turnoff);
-
-/* in scr.c */
-extern int beepers, dir, x, y;
-extern char oldch;
-void movekarel(void);		/* move karel one character forward */
-void putbeeper(void);		/* put down one beeper */
-void pickbeeper(void);		/* pick up one beeper underneath karel */
-void initialize(void);		/* prepare for screen editing */
-void reset(void);		/* reset the screen to normal mode */
-void update(void);		/* refresh the screen */
-void placekarel(int newy, int newx);  /* put karel on screen at new location */
-void finish(void);		/* clean up; reset terminal modes, etc. */
-void readscrn(void);		/* read screen in from a file */
-void shutoff(char *s);		/* print s on bottom of screen */
-void editscr(void);		/* main interactive loop */
-int sideclear(int n);		/* return 1 if side n is clear, 0 otherwise */
 
 #endif /*__karel_h */

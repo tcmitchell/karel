@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "robot.h"
+#include "karel.h"
+#include "karelP.h"
 #include "util.h"
 
 /*----------------------------------------------------------------------*

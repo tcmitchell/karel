@@ -1,9 +1,6 @@
-/*  #include "karel.h" */
+#include "karel.h"
+#include "karelP.h"
 #include "util.h"
-#include "symbol.h"
-
-/* FIX THIS */
-extern int progp;		/* from code.c */
 
 static	Symbol	*symtab = 0;	/* the symbol table */
 

@@ -2,13 +2,12 @@ lib_LIBRARIES = libkarel.a
 
 libkarel_a_SOURCES =	code.c \
 			error.c error.h \
-			karel.h \
+			karel.h karelP.h \
 			klex.c \
 			kparse.y kparse.h \
-			robot.c robot.h \
-			symbol.c symbol.h \
+			robot.c \
+			symbol.c \
 			util.c util.h \
-			words.h \
-			world.c world.h
+			world.c
 
 YFLAGS = -d

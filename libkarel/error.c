@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <signal.h>
 #include "karel.h"
+#include "karelP.h"
 
 static char *progname = "unknown";
 
