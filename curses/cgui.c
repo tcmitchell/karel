@@ -126,24 +126,52 @@ main(int argc, char **argv)
   extern int yyparse(void);
   int c;
   char *prog_file = NULL;
+  char *world_file = NULL;
   FILE *fp;
   ktr_engine_t *engine;
   ktr_world_t *world;
   ktr_robot_t *robot;
 
-  while ((c = getopt(argc, argv, "f:")) != EOF)
+  while ((c = getopt(argc, argv, "p:w:")) != EOF)
     {
+      switch (c)
+	{
+	case 'p':
+	  prog_file = optarg;
+	  break;
+
+	case 'w':
+	  world_file = optarg;
+	  break;
+
+	default:
+	  fprintf (stderr, "Unknown argument %c\n", c);
+	  exit (1);
+	  break;
+	}
     }
 
-  if (optind <= argc)
-      prog_file = argv[optind];
+  if (prog_file == NULL || world_file == NULL)
+    {
+      fprintf (stderr, "Must specify -p program -w world\n");
+      exit (1);
+    }
 
   if ((fp = fopen(prog_file, "r")) == NULL)
-    ktr_err_fatal("can't open file %s", prog_file);
-
+    {
+      ktr_err_fatal("can't open file %s", prog_file);
+      exit (1);
+    }
   engine = ktr_load_program (fp);
-  world = ktr_world_create(5, 5);
-  ktr_world_put_beeper(world, 3, 3);
+  fclose (fp);
+
+  if ((fp = fopen(world_file, "r")) == NULL)
+    {
+      ktr_err_fatal("can't open file %s", world_file);
+    }
+  world = ktr_world_read (fp);
+  fclose (fp);
+
   robot = ktr_robot_create(world, robot_st, robot_ave, robot_dir, 0);
   ktr_robot_set_move_callback(robot, handle_robot_move_event);
   ktr_robot_set_turn_callback(robot, handle_robot_turn_event);

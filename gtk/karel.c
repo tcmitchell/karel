@@ -415,15 +415,15 @@ gtk_karel_execute ()
 int
 main (int argc, char *argv[])
 {
-  FILE *fp;
-  char *prog_file;
+  FILE *fp, *wfp;
+  char *prog_file, *world_file;
   GtkWidget *window;
   GtkWidget *vbox;
   GtkWidget *button;
 
   gtk_init (&argc, &argv);
 
-  if (argc < 2)
+  if (argc < 3)
     {
       printf("no karel program specified\n");
       exit(1);
@@ -435,10 +435,18 @@ main (int argc, char *argv[])
       ktr_err_fatal("can't open file %s", prog_file);
       exit(1);
     }
+  the_engine = ktr_load_program (fp);
+  close (fp);
 
-  the_engine = ktr_load_program(fp);
-  the_world = ktr_world_create(5, 5);
-  ktr_world_put_beeper(the_world, 3, 3);
+  world_file = argv[2];
+  if ((wfp = fopen(world_file, "r")) == NULL)
+    {
+      ktr_err_fatal("can't open file %s", world_file);
+      exit(1);
+    }
+  the_world = ktr_world_read (wfp);
+  close (wfp);
+
   the_robot = ktr_robot_create(the_world, robot_st, robot_ave, robot_dir, 0);
   ktr_robot_set_move_callback(the_robot, handle_robot_move_event);
   ktr_robot_set_turn_callback(the_robot, handle_robot_turn_event);
