@@ -73,6 +73,7 @@ libkarel_a_SOURCES = kparse.y kparse.c kparse.h 			engine.c 			fatal.c 			karel.
 YFLAGS = -d
 
 AM_CFLAGS = -W -Wall
+MAINTAINERCLEANFILES = kparse.h kparse.c
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_CLEAN_FILES = 
 LIBRARIES =  $(lib_LIBRARIES)
@@ -291,7 +292,7 @@ distclean-generic:
 	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
 
 maintainer-clean-generic:
-	-test -z "kparsehkparsec" || rm -f kparseh kparsec
+	-test -z "kparsehkparsec$(MAINTAINERCLEANFILES)" || rm -f kparseh kparsec $(MAINTAINERCLEANFILES)
 mostlyclean-am:  mostlyclean-libLIBRARIES mostlyclean-compile \
 		mostlyclean-tags mostlyclean-depend mostlyclean-generic
 

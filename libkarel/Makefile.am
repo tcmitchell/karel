@@ -16,3 +16,4 @@ libkarel_a_SOURCES =	kparse.y kparse.c kparse.h \
 YFLAGS = -d
 
 AM_CFLAGS = -W -Wall
+MAINTAINERCLEANFILES = kparse.h kparse.c
