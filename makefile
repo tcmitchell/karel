@@ -3,7 +3,7 @@
 OBJS = main.o klex.o symbol.o code.o y.tab.o scr.o
 
 karel:		$(OBJS)
-		cc $(CFLAGS) $(OBJS) -o karel -lcurses -ltermcap
+		$(CC) $(CFLAGS) $(OBJS) -o karel -lcurses -ltermcap
 
 $(OBJS):	karel.h
 
@@ -15,3 +15,9 @@ y.tab.c y.tab.h:	karel.y
 		yacc -d karel.y
 
 scr.o:		help.h
+
+clean:
+	$(RM) *.o karel y.tab.h y.tab.c
+
+distclean:	clean
+	$(RM) *~
