@@ -15,120 +15,139 @@ int	startaddr;				/* start of main block	*/
 int	flag;					/* flag for logic tests	*/
 int	dest;					/* branch destination	*/
 
-initcode()			/* set up counters, etc., for execution */
+void
+initcode(void)			/* set up counters, etc., for execution */
 {
-	progp = 0;
-	flag = 0;
-	pc = 0;
+  progp = 0;
+  flag = 0;
+  pc = 0;
 }
 
-setcode(addr, n)			/* install one program instruction */
-int	addr;
-Inst	n;
+void
+setcode(int addr, Inst n)		/* install one program instruction */
 {
-	prog[addr] = n;
+  prog[addr] = n;
 }
 
-setcodeint(addr, n)				/* install one int */
-int	addr, n;
+void
+setcodeint(int addr, int n)			/* install one int */
 {
-	prog[addr] = (Inst) n;
+  prog[addr] = (Inst) n;
 }
 
-code(n)						/* install next instruction */
-Inst	n;
+void
+code(Inst n)					/* install next instruction */
 {
-	if (progp >= NPROG)
-		severe("program too big", (char *) 0);
-	setcode(progp++, n);
+  if (progp >= NPROG)
+    {
+      severe("program too big", (char *) 0);
+    }
+  setcode(progp++, n);
 }
 
-codeint(n)				/* install a int as next instruction */
-int	n;
+void
+codeint(int n)				/* install a int as next instruction */
 {
-	code((Inst) n);
+  code((Inst) n);
 }
 
-execute(n)					/* execute machine */
-int	n;
+void
+execute(int n)					/* execute machine */
 {
-	int	temp;
+  int temp;
 
-	temp = pc;
-	for (pc = n; (prog[pc] != RETURN) && state; pc++) {
-		(*(prog[pc]))();
-		update();
-	}
-	pc = temp;
+  temp = pc;
+  for (pc = n; (prog[pc] != RETURN) && state; pc++)
+    {
+      (*(prog[pc]))();
+      update();
+    }
+  pc = temp;
 }
 
-turnleft()				/* turn karel 90 degrees left */
+void
+turnleft(void)				/* turn karel 90 degrees left */
 {
-	if (--dir < 0)
-		dir = 3;
-	placekarel(y, x);
+  if (--dir < 0)
+    {
+      dir = 3;
+    }
+  placekarel(y, x);
 }
 
-branch()				/* jump to another instruction */
+void
+branch(void)				/* jump to another instruction */
 {
-	dest = (int) nextinst;
-	pc = dest - 1;
+  dest = (int) nextinst;
+  pc = dest - 1;
 }
 
-condbranch()			/* jump of last logic test was false */
+void
+condbranch(void)			/* jump of last logic test was false */
 {
-	if (!flag)
-		branch();
-	else
-		advpc;
+  if (!flag)
+    {
+      branch();
+    }
+  else
+    {
+      advpc;
+    }
 }
 
-call()					/* call a user-defined instruction */
+void
+call(void)				/* call a user-defined instruction */
 {
-	execute(nextinst);
+  execute((int) nextinst);
 }
 
-loopexec()			/* execute block of code a number of times */
+void
+loopexec(void)			/* execute block of code a number of times */
 {
-	int	k, limit, loopbody;
+  int k, limit, loopbody;
 
-	limit = (int) nextinst;
-	loopbody = pc + 2;
-	for (k = 0; k < limit; k++)
-		execute(loopbody);
-	branch();
+  limit = (int) nextinst;
+  loopbody = pc + 2;
+  for (k = 0; k < limit; k++)
+    {
+      execute(loopbody);
+    }
+  branch();
 }
 
-turnoff()					/* end program execution */
+void
+turnoff(void)					/* end program execution */
 {
-	state = OFF;
+  state = OFF;
 }
 
 /* code for built-in logical test */
 
-anybeepers()		{	flag = beepers;			}
-facingeast()		{	flag = (dir == 1);		}
-facingnorth()		{	flag = (dir == 0);		}
-facingsouth()		{	flag = (dir == 2);		}
-facingwest()		{	flag = (dir == 3);		}
-frontblocked()		{	flag = !sideclear(dir);		}
-frontclear()		{	flag = sideclear(dir);		}
-leftblocked()		{	flag = !sideclear(dir-1);	}
-leftclear()		{	flag = sideclear(dir-1);	}
-nobeepers()		{	flag = !beepers;		}
-notfacingeast()		{	flag = (dir != 1);		}
-notfacingnorth()	{	flag = (dir != 0);		}
-notfacingsouth()	{	flag = (dir != 2);		}
-notfacingwest()		{	flag = (dir != 3);		}
-rightblocked()		{	flag = !sideclear(dir+1);	}
-rightclear()		{	flag = sideclear(dir+1);	}
+void anybeepers(void)		{	flag = beepers;			}
+void facingeast(void)		{	flag = (dir == 1);		}
+void facingnorth(void)		{	flag = (dir == 0);		}
+void facingsouth(void)		{	flag = (dir == 2);		}
+void facingwest(void)		{	flag = (dir == 3);		}
+void frontblocked(void)		{	flag = !sideclear(dir);		}
+void frontclear(void)		{	flag = sideclear(dir);		}
+void leftblocked(void)		{	flag = !sideclear(dir-1);	}
+void leftclear(void)		{	flag = sideclear(dir-1);	}
+void nobeepers(void)		{	flag = !beepers;		}
+void notfacingeast(void)	{	flag = (dir != 1);		}
+void notfacingnorth(void)	{	flag = (dir != 0);		}
+void notfacingsouth(void)	{	flag = (dir != 2);		}
+void notfacingwest(void)	{	flag = (dir != 3);		}
+void rightblocked(void)		{	flag = !sideclear(dir+1);	}
+void rightclear(void)		{	flag = sideclear(dir+1);	}
 
-nexttobeeper()
+void
+nexttobeeper(void)
 {
 	flag = (oldch == '*' || (oldch >= '0' && oldch <= '9'));
 }
 
-notnexttobeeper()
+void
+notnexttobeeper(void)
 {
 	nexttobeeper();
 	flag = !flag;

@@ -13,7 +13,10 @@
 
 #include	<stdio.h>
 #include	<signal.h>
+#include	<string.h>
 #include	"karel.h"
+
+extern int yyparse(void);
 
 int	nflg;			/* -n (no screen load) option flag	*/
 int	errfound;		/* 1 if a syntax or lexical error found	*/
@@ -24,9 +27,103 @@ char	basename[BUFSIZ];	/* name of source without suffix	*/
 char	*usage = "usage: karel [-n] [-b beepers] file.k\n";
 FILE	*fp;			/* source file				*/
 
-main(argc, argv)
-int	argc;
-char	*argv[];
+/* there are many error handlers to handle many type of errors	*/
+
+void
+syserr(char *s, char *t)	/* system error: print error message and die */
+{
+  if (state != COMPILE)
+    {
+      finish();
+    }
+  fprintf(stderr, "%s: %s", progname, s);
+  if (t)
+    {
+      fprintf(stderr, "%s", t);
+    }
+  fputc('\n', stderr);
+  exit(1);
+}
+
+void
+severe(char *s, char *t)		/* print error message and die */
+{
+  fprintf(stderr, "%s", s);
+  if (t)
+    {
+      fprintf(stderr, " %s", t);
+    }
+  fprintf(stderr, "\ncannot recover from previous errors -- QUIT\n");
+  exit(1);
+}
+
+void
+err(char *s, char *t)				/* print error message */
+{
+  errfound = 1;
+  fprintf(stderr, "\t%s", s);
+  if (t)
+    {
+      fprintf(stderr, " %s", t);
+    }
+  fprintf(stderr, ", line %d\n", linecount);
+}
+
+void
+yyerror(char *s)				/* handle parser error */
+{
+  errfound = 1;
+  fprintf(stderr, "\t%s, line %d", s, linecount);
+  if (yytext[0])
+    {
+      fprintf(stderr, " near %s", yytext);
+    }
+  fputc('\n', stderr);
+}
+
+void
+interrupt(int arg)				/* handle interupts, die */
+{
+  arg = arg;			/* Keep gcc happy */
+  signal(SIGINT, SIG_IGN);
+  finish();
+  fprintf(stderr, "interupt\n");
+  exit(0);
+}
+
+void
+screrror(char *s)			/* reset terminal modes, die */
+{
+	reset();
+	fprintf(stderr, "\nscreen error: %s\n", s);
+	exit(1);
+}
+
+void
+dofiles(char *s)			/* get filename, open files, etc. */
+{
+  int	suffstart;
+  char	suffix[10];
+
+  /* check suffix */
+  strcpy(suffix, ".");
+  strcat(suffix, PROGSUFFIX);
+  suffstart = strlen(s) - strlen(suffix);
+  if (strcmp(s + suffstart, suffix) != 0)
+    {
+      syserr("bad filename: ", s);
+    }
+  s[suffstart] = '\0';				/* delete suffix */
+  strcpy(basename, s);
+  sprintf(filename, "%s.%s", basename, PROGSUFFIX);
+  if ((fp = fopen(filename, "r")) == NULL)
+    {
+      syserr("can't open file: ", s);
+    }
+}
+
+int
+main(int argc, char **argv)
 {
 	progname = *argv;
 	state = COMPILE;
@@ -89,84 +186,5 @@ char	*argv[];
 	else
 		fprintf(stderr,
 			"Execution suppressed due to compilation errors\n");
-}
-
-/* there are many error handlers to handle many type of errors	*/
-
-syserr(s, t)			/* system error: print error message and die */
-char	*s, *t;
-{
-	if (state != COMPILE)
-		finish();
-	fprintf(stderr, "%s: %s", progname, s);
-	if (t)
-		fprintf(stderr, "%s", t);
-	fputc('\n', stderr);
-	exit(1);
-}
-
-severe(s, t)				/* print error message and die */
-char	*s, *t;
-{
-	fprintf(stderr, "%s", s);
-	if (t)
-		fprintf(stderr, " %s", t);
-	fprintf(stderr, "\ncannot recover from previous errors -- QUIT\n");
-	exit(1);
-}
-
-err(s, t)					/* print error message */
-char	*s, *t;
-{
-	errfound = 1;
-	fprintf(stderr, "\t%s", s);
-	if (t)
-		fprintf(stderr, " %s", t);
-	fprintf(stderr, ", line %d\n", linecount);
-}
-
-yyerror(s)					/* handle parser error */
-char	*s;
-{
-	errfound = 1;
-	fprintf(stderr, "\t%s, line %d", s, linecount);
-	if (yytext[0])
-		fprintf(stderr, " near %s", yytext);
-	fputc('\n', stderr);
-}
-
-void
-interrupt(int arg)				/* handle interupts, die */
-{
-	signal(SIGINT, SIG_IGN);
-	finish();
-	fprintf(stderr, "interupt\n");
-	exit(0);
-}
-
-screrror(s)				/* reset terminal modes, die */
-char	*s;
-{
-	reset();
-	fprintf(stderr, "\nscreen error: %s\n", s);
-	exit(1);
-}
-
-dofiles(s)				/* get filename, open files, etc. */
-char	*s;
-{
-	int	suffstart;
-	char	suffix[10];
-
-	/* check suffix */
-	strcpy(suffix, ".");
-	strcat(suffix, PROGSUFFIX);
-	suffstart = strlen(s) - strlen(suffix);
-	if (strcmp(s + suffstart, suffix) != 0)
-		syserr("bad filename: ", s);
-	s[suffstart] = '\0';				/* delete suffix */
-	strcpy(basename, s);
-	sprintf(filename, "%s.%s", basename, PROGSUFFIX);
-	if ((fp = fopen(filename, "r")) == NULL)
-		syserr("can't open file: ", s);
+	return 0;
 }

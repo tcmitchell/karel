@@ -2,8 +2,8 @@
 
 static	Symbol	*symtab = 0;		/* the symbol table */
 
-Symbol	*lookup(s)			/* find s in symbol table */
-char	*s;
+Symbol *
+lookup(char *s)			/* find s in symbol table */
 {
 	Symbol	*sp;					/* loop index */
 
@@ -13,8 +13,8 @@ char	*s;
 	return(0);			/* not found */
 }
 
-install(s)				/* install s in symbol table */
-char	*s;
+void
+install(char *s)			/* install s in symbol table */
 {
 	char	*emalloc();
 	Symbol	*sp;				/* new symbol table entry */

@@ -13,7 +13,8 @@ char	yytext[BUFSIZ];
 static	char	c;			/* character being handled */
 extern	FILE	*fp;			/* source file; found in main.c */
 
-initlex()				/* prepare the lexical analyzer */
+void
+initlex(void)				/* prepare the lexical analyzer */
 {
 	/* count the number of keywords */
 	for (nkeys = 0; keywords[nkeys].name; nkeys++)
@@ -23,18 +24,127 @@ initlex()				/* prepare the lexical analyzer */
 	c = ' ';
 }
 
-char	egetc(fp)			/* get a character, checking for EOF */
-FILE	*fp;
+char
+egetc(FILE *fp)			/* get a character, checking for EOF */
 {
-	char	c;
+  char	c;
 
-	if ((c = getc(fp)) == EOF)
-		severe("unexpected end of program");
-	else
-		return(c);
+  if ((c = getc(fp)) == EOF)
+    {
+      severe("unexpected end of program", NULL);
+      return((char) 0);		/* Never executed -- keep gcc happy */
+    }
+  else
+    {
+      return(c);
+    }
 }
 
-yylex()				/* lexical analyzer */
+void
+skipwhite(void)			/* skip over white space (tabs, etc.) */
+{
+  while (isspace(c))
+    {
+      if (c == '\n')
+	{
+	  linecount++;
+	}
+      c = getc(fp);
+    }
+}
+
+int
+getkeyid(char *s)	/* find s in keyword array; return -1 if not found */
+{
+  int i = 0;
+  for (i=0; i<nkeys; i++)
+    {
+      if (strcmp(s, keywords[i].name) == 0)
+	{
+	  return i;
+	}
+    }
+  return -1;
+}
+
+int
+getkeyid_orig(char *s)	/* find s in keyword array; return -1 if not found */
+{
+  int	cmp, lower, upper, guess, found;
+
+  /* use a binary search */
+  found = lower = 0;
+  upper = nkeys;
+  while (lower <= upper && !found)
+    {
+      if (!(cmp = strcmp(s, keywords[guess=(lower+upper)/2].name)))
+	{
+	  found = 1;
+	}
+      else
+	{
+	  if (cmp > 0)
+	    {
+	      lower = guess + 1;
+	    }
+	  else
+	    {
+	      upper = guess - 1;
+	    }
+	}
+    }
+  return(found ? guess : -1);
+}
+
+
+/* this is sort of redundant, but I didn't want to pass two kinds of	*/
+/* arrays to the same search routine					*/
+
+int
+getbltinid(char *s)	/* find s in keyword array; return -1 if not found */
+{
+  int i = 0;
+  for (i=0; i<nbltins; i++)
+    {
+      if (strcmp(s, bltins[i].name) == 0)
+	{
+	  return i;
+	}
+    }
+  return -1;
+}
+
+int
+getbltinid_orig(char *s) /* find s in built-in array; return -1 if not found */
+{
+  int	cmp, lower, upper, guess, found;
+
+  /* use a binary search */
+  found = lower = 0;
+  upper = nbltins;
+  while (lower <= upper && !found)
+    {
+      if (!(cmp = strcmp(s, bltins[guess=(lower+upper)/2].name)))
+	{
+	  found = 1;
+	}
+      else
+	{
+	  if (cmp > 0)
+	    {
+	      lower = guess + 1;
+	    }
+	  else
+	    {
+	      upper = guess - 1;
+	    }
+	}
+    }
+  return(found ? guess : -1);
+}
+
+int
+yylex(void)				/* lexical analyzer */
 {
 	int	len;				/* length of word	*/
 	int	n;				/* temporary		*/
@@ -69,82 +179,4 @@ yylex()				/* lexical analyzer */
 		c = getc(fp);
 	}
 	return(yyval);
-}
-
-getkeyid(s)	/* find s in keyword array; return -1 if not found */
-char	*s;
-{
-  int i = 0;
-  for (i=0; i<nkeys; i++) {
-    if (strcmp(s, keywords[i].name) == 0) {
-      return i;
-    }
-  }
-  return -1;
-}
-
-getkeyid_orig(s)	/* find s in keyword array; return -1 if not found */
-char	*s;
-{
-	int	cmp, lower, upper, guess, found;
-
-	/* use a binary search */
-	found = lower = 0;
-	upper = nkeys;
-	while (lower <= upper && !found) {
-		if (!(cmp = strcmp(s, keywords[guess=(lower+upper)/2].name)))
-			found = 1;
-		else
-			if (cmp > 0)
-				lower = guess + 1;
-			else
-				upper = guess - 1;
-	}
-	return(found ? guess : -1);
-}
-
-
-/* this is sort of redundant, but I didn't want to pass two kinds of	*/
-/* arrays to the same search routine					*/
-
-
-getbltinid(s)	/* find s in keyword array; return -1 if not found */
-char	*s;
-{
-  int i = 0;
-  for (i=0; i<nbltins; i++) {
-    if (strcmp(s, bltins[i].name) == 0) {
-      return i;
-    }
-  }
-  return -1;
-}
-
-getbltinid_orig(s)		/* find s in built-in array; return -1 if not found */
-char	*s;
-{
-	int	cmp, lower, upper, guess, found;
-
-	/* use a binary search */
-	found = lower = 0;
-	upper = nbltins;
-	while (lower <= upper && !found) {
-		if (!(cmp = strcmp(s, bltins[guess=(lower+upper)/2].name)))
-			found = 1;
-		else
-			if (cmp > 0)
-				lower = guess + 1;
-			else
-				upper = guess - 1;
-	}
-	return(found ? guess : -1);
-}
-
-skipwhite()			/* skip over white space (tabs, etc.) */
-{
- 	while (isspace(c)) {
-		if (c == '\n')
-			linecount++;
-		c = getc(fp);
-	}
 }

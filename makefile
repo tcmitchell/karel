@@ -1,12 +1,12 @@
 # makefile for karel 1.0	11/6/85
 
-SRCS = code.c klex.c main.c scr.c symbol.c
-HDRS = help.h karel.h words.h
-OBJS = $(SRCS:.c=.o) y.tab.o
+SRCS = code.c klex.c main.c scr.c symbol.c y.tab.c
+HDRS = help.h karel.h words.h y.tab.h
+OBJS = $(SRCS:.c=.o)
 
 CC = gcc
 CFLAGS = -W -Wall -g
-CFLAGS = -ansi -g
+#CFLAGS = -ansi -g
 LDFLAGS = -lcurses -ltermcap
 
 karel:		$(OBJS)
@@ -20,14 +20,18 @@ y.tab.c y.tab.h:	karel.y
 scr.o:		help.h
 
 clean:
-	$(RM) *.o karel y.tab.h y.tab.c
+	$(RM) *.o karel y.tab.h y.tab.c TAGS
 
 distclean:	clean
 	$(RM) *~
 
-depend:	y.tab.h
+depend:	$(SRCS) $(HDRS)
 	makedepend $(SRCS) $(HDRS)
 
+TAGS: $(SRCS) $(HDRS)
+	etags $(SRCS) $(HDRS)
+
+tags:	TAGS
 
 # DO NOT DELETE
 
@@ -56,7 +60,7 @@ main.o: /usr/include/signal.h /usr/include/bits/sigset.h
 main.o: /usr/include/bits/signum.h /usr/include/time.h
 main.o: /usr/include/bits/siginfo.h /usr/include/bits/sigaction.h
 main.o: /usr/include/bits/sigcontext.h /usr/include/asm/sigcontext.h
-main.o: /usr/include/bits/sigstack.h karel.h
+main.o: /usr/include/bits/sigstack.h /usr/include/string.h karel.h
 scr.o: /usr/include/stdio.h /usr/include/features.h /usr/include/sys/cdefs.h
 scr.o: /usr/include/gnu/stubs.h
 scr.o: /usr/lib/gcc-lib/i386-redhat-linux/egcs-2.91.66/include/stddef.h
@@ -71,4 +75,10 @@ scr.o: /usr/include/bits/sigstack.h /usr/include/curses.h
 scr.o: /usr/include/ncurses/unctrl.h /usr/include/ncurses/curses.h karel.h
 scr.o: help.h
 symbol.o: karel.h
+y.tab.o: /usr/include/stdio.h /usr/include/features.h
+y.tab.o: /usr/include/sys/cdefs.h /usr/include/gnu/stubs.h
+y.tab.o: /usr/lib/gcc-lib/i386-redhat-linux/egcs-2.91.66/include/stddef.h
+y.tab.o: /usr/lib/gcc-lib/i386-redhat-linux/egcs-2.91.66/include/stdarg.h
+y.tab.o: /usr/include/bits/types.h /usr/include/libio.h
+y.tab.o: /usr/include/_G_config.h /usr/include/bits/stdio_lim.h karel.h
 words.o: y.tab.h

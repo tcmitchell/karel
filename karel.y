@@ -1,9 +1,9 @@
 %{
 
 #include	<stdio.h>
+#include	<stdlib.h>
 #include	"karel.h"
 
-extern	int	condbranch(), branch(), call(), bltin(), loopexec();
 char	instname[BUFSIZ];
 Symbol	*sp;
 
