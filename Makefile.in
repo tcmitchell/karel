@@ -65,7 +65,7 @@ VERSION = @VERSION@
 YACC = @YACC@
 
 EXTRA_DIST = karel.1
-SUBDIRS = libkarel test curses gtk
+SUBDIRS = libkarel doc test curses gtk
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_CLEAN_FILES = 

@@ -22,4 +22,4 @@ AC_C_CONST
 
 dnl Checks for library functions.
 
-AC_OUTPUT(Makefile libkarel/Makefile test/Makefile curses/Makefile gtk/Makefile)
+AC_OUTPUT(Makefile libkarel/Makefile test/Makefile curses/Makefile gtk/Makefile doc/Makefile)
