@@ -4,6 +4,7 @@
 @set VERSION 0.1
 
 @c %**start of header
+@smallbook
 @setfilename karel.info
 @settitle Karel the Robot
 @c %**end of header
@@ -11,27 +12,58 @@
 @setchapternewpage odd
 
 @ifinfo
-This is a short example of a complete Texinfo file.
+This file documents Karel, a robot simulator/interpreter.
 
-Copyright 2000 Tom Mitchell
+Copyright (C) 2000 Tom Mitchell
+
+Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.
+
+@ignore
+Permission is granted to process this file through TeX and print the
+results, provided the printed document carries copying permission
+notice identical to this one except for the removal of this paragraph
+(this paragraph not being relevant to the printed manual).
+
+@end ignore
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the entire
+resulting derived work is distributed under the terms of a permission
+notice identical to this one.
+
+Permission is granted to copy and distribute translations of this manual
+into another language, under the above conditions for modified versions,
+except that this permission notice may be stated in a translation approved
+by the Free Software Foundation.
+
 @end ifinfo
 
 @titlepage
-@sp 10
-@comment The title is printed in a large font.
 @title Karel
 @subtitle A Robot Interpreter
 @subtitle Version @value{VERSION}
 @author Tom Mitchell
-@author @email{tmitchel@@users.sourceforge.net}
-
-@c @center @titlefont{Karel the Robot}
-@c @center {An Interpreter}
+@author tmitchel@@users.sourceforge.net
 
 @c The following two commands start the copyright page.
 @page
 @vskip 0pt plus 1filll
 Copyright @copyright{} 2000 Tom Mitchell
+
+Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the entire
+resulting derived work is distributed under the terms of a permission
+notice identical to this one.
+
+Permission is granted to copy and distribute translations of this manual
+into another language, under the above conditions for modified versions,
+except that this permission notice may be stated in a translation approved
+by the Free Software Foundation.
 @end titlepage
 
 @node    Top, Introduction, (dir), (dir)
@@ -40,58 +72,226 @@ Copyright @copyright{} 2000 Tom Mitchell
 @menu
 * Introduction::                About Karel
 
-* First Chapter::               The first chapter is the
-                     only chapter in this sample.
+* The Karel Language::          
+* Extending Karel::             
+* Function Index::              
 * Concept Index::               This index has two entries.
 @end menu
 
-@node    Introduction, First Chapter, Top, Top
+@node    Introduction, The Karel Language, Top, Top
 @comment node-name,     next,          previous, up
 @chapter Introduction
 
 @menu
-* Thanks::                      
+* Acknowledgements::            
 * Learning to Program::         
+* Sample Karel Program::        
+* Running the Karel Simulator::  
+* Things to do::                
 @end menu
 
-@node Thanks, Learning to Program, Introduction, Introduction
+@node Acknowledgements, Learning to Program, Introduction, Introduction
 @comment  node-name,  next,  previous,  up
-@section Thanks
+@section Acknowledgements
 @cindex Miksovsky, Jan
 @cindex Pattis, Richard
 
 Thanks to Richard Pattis and Jan Miksovsky.
 
-@node Learning to Program,  , Thanks, Introduction
+Richard Pattis wrote @cite{Karel the Robot}, upon which this program is
+based.  Richard was kind to give me his permission to distribute this
+simulator.
+
+Jan Miksovsky wrote a Karel simulator in the mid 1980's.  I found that
+program in early 2000, dusted it off, and it ran.  I then modified the
+program to be more modular, and object-oriented (as much as one can in
+C).  I was able to locate Jan on the internet (it pays to have a unique
+last name I guess) and he was gracious enough to give me his permission
+to modify his original work and distribute it.  Not much remains of
+Jan's code, but the concepts behind the simulator, and particularly the
+engine that builds and executes a Karel program, are Jan's, and I
+probably couldn't have written this system without his lead to follow.
+
+@node Learning to Program, Sample Karel Program, Acknowledgements, Introduction
 @comment  node-name,  next,  previous,  up
 @section Learning to Program
 
-I learned to program in 1982.
+My first college computer class, in the fall of 1982 used
+@cite{Karel the Robot} as the introduction to programming in Pascal.  I
+found it an entertaining and useful introduction to structured
+programming.  While structured programming has fallen out of favor in
+deference to object oriented programming, I still think this can be a
+useful introduction to computer programming.  And I think that children
+are entertained by the idea of instructing a robot to perform a task,
+and then watching the robot actually follow the instructions.
 
-@node    First Chapter, Concept Index, Introduction, Top
-@comment node-name,     next,          previous, up
-@chapter First Chapter
-@cindex Sample index entry
 
-This is the contents of the first chapter.
-@cindex Another sample index entry
+@node Sample Karel Program, Running the Karel Simulator, Learning to Program, Introduction
+@section Sample Karel Program
 
-Here is a numbered list.
+@smallexample
+
+@{ about the simplest karel program you can have @}
+
+BEGINNING-OF-PROGRAM
+  BEGINNING-OF-EXECUTION
+    move;
+    turnoff
+  END-OF-EXECUTION
+END-OF-PROGRAM
+
+@end smallexample
+
+
+@node Running the Karel Simulator, Things to do, Sample Karel Program, Introduction
+@section Running the Karel Simulator
+
+
+@node Things to do,  , Running the Karel Simulator, Introduction
+@section Things to do
 
 @enumerate
 @item
-This is the first item.
+Save and read world description files
 
 @item
-This is the second item.
+debugger/code stepper
 @end enumerate
 
-The @code{makeinfo} and @code{texinfo-format-buffer}
-commands transform a Texinfo file such as this into
-an Info file; and @TeX{} typesets it for a printed
-manual.
 
-@node    Concept Index,  , First Chapter, Top
+@node The Karel Language, Extending Karel, Introduction, Top
+@chapter The Karel Language
+
+@menu
+* Primitives::                  
+* Tests::                       
+* Control Structures::          
+* Defining Procedures::         
+@end menu
+
+@node Primitives, Tests, The Karel Language, The Karel Language
+@section Primitives
+
+@deffn Built-in move
+Move Karel one intersection forward.
+@end deffn
+
+@deffn Built-in turnoff
+Turn off Karel
+@end deffn
+
+@node Tests, Control Structures, Primitives, The Karel Language
+@section Tests
+
+@deffn Test front-is-clear
+Your description here!
+@end deffn
+
+@deffn Test front-is-blocked
+True if there is a wall directly in front of Karel.  False otherwise.
+@end deffn
+
+@deffn Test left-is-clear
+Your description here!
+@end deffn
+
+@deffn Test left-is-blocked
+Your description here!
+@end deffn
+
+@deffn Test right-is-clear
+Your description here!
+@end deffn
+
+@deffn Test right-is-blocked
+Your description here!
+@end deffn
+
+@deffn Test next-to-a-beeper
+True if Karel is standing at an intersection that has a beeper.  False
+otherwise.
+@end deffn
+
+@deffn Test not-next-to-a-beeper
+Your description here!
+@end deffn
+
+@deffn Test facing-north
+Your description here!
+@end deffn
+
+@deffn Test not-facing-north
+Your description here!
+@end deffn
+
+@deffn Test facing-south
+Your description here!
+@end deffn
+
+@deffn Test not-facing-south
+Your description here!
+@end deffn
+
+@deffn Test facing-east
+Your description here!
+@end deffn
+
+@deffn Test not-facing-east
+Your description here!
+@end deffn
+
+@deffn Test facing-west
+Your description here!
+@end deffn
+
+@deffn Test not-facing-west
+Your description here!
+@end deffn
+
+@deffn Test any-beepers-in-beeper-bag
+Your description here!
+@end deffn
+
+@deffn Test no-beepers-in-beeper-bag
+Your description here!
+@end deffn
+
+
+
+@node Control Structures, Defining Procedures, Tests, The Karel Language
+@section Control Structures
+
+@node Defining Procedures,  , Control Structures, The Karel Language
+@section Defining Procedures
+
+@node Extending Karel, Function Index, The Karel Language, Top
+@chapter Extending Karel
+
+@menu
+* Building applications::       
+* Robot API::                   
+* World API::                   
+* Engine API::                  
+@end menu
+
+@node Building applications, Robot API, Extending Karel, Extending Karel
+@section Building applications
+
+@node Robot API, World API, Building applications, Extending Karel
+@section Robot API
+
+@node World API, Engine API, Robot API, Extending Karel
+@section World API
+
+@node Engine API,  , World API, Extending Karel
+@section Engine API
+
+@node    Function Index, Concept Index, Extending Karel, Top
+@comment node-name,    next,  previous,      up
+@unnumbered Function Index
+@printindex fn
+
+@node    Concept Index,  , Function Index, Top
 @comment node-name,    next,  previous,      up
 @unnumbered Concept Index
 
