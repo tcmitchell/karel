@@ -22,7 +22,7 @@
 bin_PROGRAMS = karelg
 
 karelg_SOURCES = karel.c
-karelg_LDFLAGS = `gtk-config --libs`
+karelg_LDFLAGS = `$(GTK_CONFIG) --libs`
 karelg_LDADD = -L../libkarel -lkarel
 
-INCLUDES = `gtk-config --cflags` -I$(srcdir)/../libkarel
+INCLUDES = `$(GTK_CONFIG) --cflags` -I$(srcdir)/../libkarel

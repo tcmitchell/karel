@@ -19,7 +19,11 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
 
+if WITH_GTK
 SUBDIRS = libkarel curses gtk doc test
+else
+SUBDIRS = libkarel curses doc test
+endif
 
 dist-hook:
 	mkdir $(distdir)/samples

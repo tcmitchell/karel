@@ -7,22 +7,32 @@ AC_PROG_CC
 AC_PROG_YACC
 AC_PROG_RANLIB
 
+AC_ARG_WITH(gtk,[  --with-gtk              build GTK based interface],
+[case "${withval}" in
+  yes) with_gtk=true ;;
+  no)  with_gtk=false ;;
+  *) AC_MSG_ERROR(bad value $withval for --with-gtk) ;;
+esac],
+[with_gtk=default])
+
 dnl Check a --with-gtk flag to indicate no gtk is to be used.
 dnl This will aid in testing, as well as being the right thing.
 dnl
-dnl - AC_PATH_PROG(GTK_CONFIG, gtk-config, no)
-dnl - if test "$GTK_CONFIG" = "no" ; then
-dnl -   GTK_CFLAGS=''
-dnl -   GTK_LIBS=''
-dnl -   HAVE_GTK=0
-dnl - else
-dnl -   GTK_CFLAGS=`$GTK_CONFIG --cflags`
-dnl -   GTK_LIBS=`$GTK_CONFIG --libs`
-dnl -   HAVE_GTK=1
-dnl - fi
-dnl - AC_DEFINE_UNQUOTED(HAVE_GTK,$HAVE_GTK)
-dnl - AC_SUBST(GTK_CFLAGS)
-dnl - AC_SUBST(GTK_LIBS)
+AC_PATH_PROG(GTK_CONFIG, gtk-config, no)
+if test "$GTK_CONFIG" = "no" ; then
+  case "${with_gtk}" in
+    true) AC_MSG_ERROR(--with-gtk specified but gtk-config not found in PATH) ;; 
+    false | default) build_gtk=false ;;
+  esac
+else
+  case "${with_gtk}" in
+    true | default) build_gtk=true ;;
+    false) build_gtk=false ;;
+  esac
+fi
+
+AM_CONDITIONAL(WITH_GTK, test x$build_gtk = xtrue)
+
 
 dnl Checks for libraries.
 dnl Replace `main' with a function in -lcurses:
