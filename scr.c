@@ -4,7 +4,7 @@
 #include	"karel.h"
 #include	"help.h"
 
-#define		scrnchr(t, s)	(stdscr->_y[t][s] & 0177)
+#define		scrnchr(t, s)	(mvinch(t,s) & A_CHARTEXT)
 
 int	cx, cy;					/* cursor coordinates	*/
 int	x, y;					/* Karel's x, y coord's	*/
@@ -517,7 +517,7 @@ WINDOW	*a, *b;
 
 	for (k = 0; k < LINES - 1; k++)
 		for (j = 0; j < COLS; j++)
-			b->_y[k][j] = a->_y[k][j];
+			mvwaddch(b, k, j, mvwinch(a, k, j));
 	touchwin(b);
 }
 
