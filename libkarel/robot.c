@@ -7,12 +7,12 @@
  *			   Private Functions                            *
  *----------------------------------------------------------------------*/
 
-static k_robot_move_event_t *
-k_robot_create_move_event(int old_s, int old_a, int new_s, int new_a)
+static ktr_robot_move_event_t *
+ktr_robot_create_move_event(int old_s, int old_a, int new_s, int new_a)
 {
-  k_robot_move_event_t *ev;
+  ktr_robot_move_event_t *ev;
 
-  ev = (k_robot_move_event_t *) emalloc(sizeof(k_robot_move_event_t));
+  ev = (ktr_robot_move_event_t *) emalloc(sizeof(ktr_robot_move_event_t));
   ev->old_street = old_s;
   ev->old_avenue = old_a;
   ev->new_street = new_s;
@@ -20,23 +20,23 @@ k_robot_create_move_event(int old_s, int old_a, int new_s, int new_a)
   return ev;
 }
 
-static k_robot_turn_event_t *
-k_robot_create_turn_event(k_direction_t old, k_direction_t new)
+static ktr_robot_turn_event_t *
+ktr_robot_create_turn_event(ktr_direction_t old, ktr_direction_t new)
 {
-  k_robot_turn_event_t *ev;
+  ktr_robot_turn_event_t *ev;
 
-  ev = (k_robot_turn_event_t *) emalloc(sizeof(k_robot_turn_event_t));
+  ev = (ktr_robot_turn_event_t *) emalloc(sizeof(ktr_robot_turn_event_t));
   ev->old_direction = old;
   ev->new_direction = new;
   return ev;
 }
 
 static void
-k_robot_set_pos(k_robot_t *r, int street, int avenue)
+ktr_robot_set_pos(ktr_robot_t *r, int street, int avenue)
 {
-  k_robot_move_event_t *ev;
+  ktr_robot_move_event_t *ev;
 
-  ev = k_robot_create_move_event(r->street, r->avenue, street, avenue);
+  ev = ktr_robot_create_move_event(r->street, r->avenue, street, avenue);
   r->street = street;
   r->avenue = avenue;
   if (r->move_cb)
@@ -44,38 +44,38 @@ k_robot_set_pos(k_robot_t *r, int street, int avenue)
 }
 
 static void
-k_robot_set_dir(k_robot_t *r, k_direction_t dir)
+ktr_robot_set_dir(ktr_robot_t *r, ktr_direction_t dir)
 {
-  k_robot_turn_event_t *ev;
+  ktr_robot_turn_event_t *ev;
 
-  ev = k_robot_create_turn_event(r->dir, dir);
+  ev = ktr_robot_create_turn_event(r->dir, dir);
   r->dir = dir;
   if (r->turn_cb)
     r->turn_cb(ev);
 }
 
 static int
-is_dir_blocked(k_robot_t *r, k_direction_t dir)
+is_dir_blocked(ktr_robot_t *r, ktr_direction_t dir)
 {
   switch (dir)
     {
-    case K_NORTH:
-      return k_world_check_ew_wall(r->world, r->street, r->avenue);
+    case KTR_NORTH:
+      return ktr_world_check_ew_wall(r->world, r->street, r->avenue);
 
-    case K_EAST:
-      return k_world_check_ns_wall(r->world, r->street, r->avenue);
+    case KTR_EAST:
+      return ktr_world_check_ns_wall(r->world, r->street, r->avenue);
 
-    case K_SOUTH:
+    case KTR_SOUTH:
       if (r->street == 1)
 	return 1;
       else
-	return k_world_check_ew_wall(r->world, r->street - 1, r->avenue);
+	return ktr_world_check_ew_wall(r->world, r->street - 1, r->avenue);
 
-    case K_WEST:
+    case KTR_WEST:
       if (r->avenue == 1)
 	return 1;
       else
-	return k_world_check_ns_wall(r->world, r->street, r->avenue - 1);
+	return ktr_world_check_ns_wall(r->world, r->street, r->avenue - 1);
 
     default:
       /* Need an error stop function */
@@ -88,13 +88,13 @@ is_dir_blocked(k_robot_t *r, k_direction_t dir)
  *			   Public API                                   *
  *----------------------------------------------------------------------*/
 
-k_robot_t *
-k_robot_create(k_world_t *world, int street, int avenue,
-	       k_direction_t dir, int n_beepers)
+ktr_robot_t *
+ktr_robot_create(ktr_world_t *world, int street, int avenue,
+	       ktr_direction_t dir, int n_beepers)
 {
-  k_robot_t * robot;
+  ktr_robot_t * robot;
 
-  robot = (k_robot_t *) malloc(sizeof(k_robot_t));
+  robot = (ktr_robot_t *) malloc(sizeof(ktr_robot_t));
   robot->street = street;
   robot->avenue = avenue;
   robot->n_beepers = n_beepers;
@@ -105,19 +105,19 @@ k_robot_create(k_world_t *world, int street, int avenue,
 }
 
 void
-k_robot_set_move_callback(k_robot_t *r, k_robot_move_callback_t cb)
+ktr_robot_set_move_callback(ktr_robot_t *r, ktr_robot_move_callback_t cb)
 {
   r->move_cb = cb;
 }
 
 void
-k_robot_set_turn_callback(k_robot_t *r, k_robot_turn_callback_t cb)
+ktr_robot_set_turn_callback(ktr_robot_t *r, ktr_robot_turn_callback_t cb)
 {
   r->turn_cb = cb;
 }
 
 void
-k_robot_get_pos(k_robot_t *r, int *street, int *avenue)
+ktr_robot_get_pos(ktr_robot_t *r, int *street, int *avenue)
 {
   (*street) = r->street;
   (*avenue) = r->avenue;
@@ -129,63 +129,63 @@ k_robot_get_pos(k_robot_t *r, int *street, int *avenue)
  *----------------------------------------------------------------------*/
 
 int
-k_robot_any_beepers_in_beeper_bag(k_robot_t *r)
+ktr_robot_any_beepers_in_beeper_bag(ktr_robot_t *r)
 {
   return (r->n_beepers > 0);
 }
 
 int
-k_robot_facing_east(k_robot_t *r)
+ktr_robot_facing_east(ktr_robot_t *r)
 {
-  return (r->dir == K_EAST);
+  return (r->dir == KTR_EAST);
 }
 
 int
-k_robot_facing_north(k_robot_t *r)
+ktr_robot_facing_north(ktr_robot_t *r)
 {
-  return (r->dir == K_NORTH);
+  return (r->dir == KTR_NORTH);
 }
 
 int
-k_robot_facing_south(k_robot_t *r)
+ktr_robot_facing_south(ktr_robot_t *r)
 {
-  return (r->dir == K_SOUTH);
+  return (r->dir == KTR_SOUTH);
 }
 
 int
-k_robot_facing_west(k_robot_t *r)
+ktr_robot_facing_west(ktr_robot_t *r)
 {
-  return (r->dir == K_WEST);
+  return (r->dir == KTR_WEST);
 }
 
 int
-k_robot_front_is_blocked(k_robot_t *r)
+ktr_robot_front_is_blocked(ktr_robot_t *r)
 {
   return is_dir_blocked(r, r->dir);
 }
 
 int
-k_robot_front_is_clear(k_robot_t *r)
+ktr_robot_front_is_clear(ktr_robot_t *r)
 {
-  return (! k_robot_front_is_blocked(r));
+  return (! ktr_robot_front_is_blocked(r));
 }
 
 int
-k_robot_left_is_blocked(k_robot_t *r)
+ktr_robot_left_is_blocked(ktr_robot_t *r)
 {
   switch (r->dir)
     {
-    case K_NORTH:
-      return is_dir_blocked(r, K_WEST);
+    case KTR_NORTH:
+      return is_dir_blocked(r, KTR_WEST);
 
-    case K_EAST:
-      return is_dir_blocked(r, K_NORTH);
+    case KTR_EAST:
+      return is_dir_blocked(r, KTR_NORTH);
 
-    case K_SOUTH:
-      return is_dir_blocked(r, K_EAST);
+    case KTR_SOUTH:
+      return is_dir_blocked(r, KTR_EAST);
 
-    case K_WEST:
-      return is_dir_blocked(r, K_SOUTH);
+    case KTR_WEST:
+      return is_dir_blocked(r, KTR_SOUTH);
 
     default:
       /* Need an error stop function */
@@ -194,69 +194,69 @@ k_robot_left_is_blocked(k_robot_t *r)
 }
 
 int
-k_robot_left_is_clear(k_robot_t *r)
+ktr_robot_left_is_clear(ktr_robot_t *r)
 {
-  return (! k_robot_left_is_blocked(r));
+  return (! ktr_robot_left_is_blocked(r));
 }
 
 int
-k_robot_next_to_a_beeper(k_robot_t *r)
+ktr_robot_next_to_a_beeper(ktr_robot_t *r)
 {
-  return k_world_check_beeper(r->world, r->street, r->avenue);
+  return ktr_world_check_beeper(r->world, r->street, r->avenue);
 }
 
 int
-k_robot_no_beepers_in_beeper_bag(k_robot_t *r)
+ktr_robot_no_beepers_in_beeper_bag(ktr_robot_t *r)
 {
   return (r->n_beepers == 0);
 }
 
 int
-k_robot_not_facing_east(k_robot_t *r)
+ktr_robot_not_facing_east(ktr_robot_t *r)
 {
-  return (! k_robot_facing_east(r));
+  return (! ktr_robot_facing_east(r));
 }
 
 int
-k_robot_not_facing_north(k_robot_t *r)
+ktr_robot_not_facing_north(ktr_robot_t *r)
 {
-  return (! k_robot_facing_north(r));
+  return (! ktr_robot_facing_north(r));
 }
 
 int
-k_robot_not_facing_south(k_robot_t *r)
+ktr_robot_not_facing_south(ktr_robot_t *r)
 {
-  return (! k_robot_facing_south(r));
+  return (! ktr_robot_facing_south(r));
 }
 
 int
-k_robot_not_facing_west(k_robot_t *r)
+ktr_robot_not_facing_west(ktr_robot_t *r)
 {
-  return (! k_robot_facing_west(r));
+  return (! ktr_robot_facing_west(r));
 }
 
 int
-k_robot_not_next_to_a_beeper(k_robot_t *r)
+ktr_robot_not_next_to_a_beeper(ktr_robot_t *r)
 {
-  return (! k_robot_next_to_a_beeper(r));
+  return (! ktr_robot_next_to_a_beeper(r));
 }
 
 int
-k_robot_right_is_blocked(k_robot_t *r)
+ktr_robot_right_is_blocked(ktr_robot_t *r)
 {
   switch (r->dir)
     {
-    case K_NORTH:
-      return is_dir_blocked(r, K_EAST);
+    case KTR_NORTH:
+      return is_dir_blocked(r, KTR_EAST);
 
-    case K_EAST:
-      return is_dir_blocked(r, K_SOUTH);
+    case KTR_EAST:
+      return is_dir_blocked(r, KTR_SOUTH);
 
-    case K_SOUTH:
-      return is_dir_blocked(r, K_WEST);
+    case KTR_SOUTH:
+      return is_dir_blocked(r, KTR_WEST);
 
-    case K_WEST:
-      return is_dir_blocked(r, K_NORTH);
+    case KTR_WEST:
+      return is_dir_blocked(r, KTR_NORTH);
 
     default:
       /* Need an error stop function */
@@ -265,9 +265,9 @@ k_robot_right_is_blocked(k_robot_t *r)
 }
 
 int
-k_robot_right_is_clear(k_robot_t *r)
+ktr_robot_right_is_clear(ktr_robot_t *r)
 {
-  int result = (! k_robot_right_is_blocked(r));
+  int result = (! ktr_robot_right_is_blocked(r));
 /*    printf("right-is-clear == %s\n", (result?"TRUE":"FALSE")); */
   return result;
 }
@@ -282,162 +282,162 @@ k_robot_right_is_clear(k_robot_t *r)
  * Need to check that the move forward does not
  * hit a wall, either artificial or a world boundary.
  */
-int k_robot_move(k_robot_t *r)
+int ktr_robot_move(ktr_robot_t *r)
 {
   switch (r->dir)
     {
-    case K_NORTH:
-      if (k_world_check_ew_wall(r->world, r->street, r->avenue))
+    case KTR_NORTH:
+      if (ktr_world_check_ew_wall(r->world, r->street, r->avenue))
 	{
 	  fprintf(stderr, "Karel hit a wall to the north!\n");
-	  return K_ERROR;
+	  return KTR_ERROR;
 	}
       else
 	{
-	  k_robot_set_pos(r, r->street + 1, r->avenue);
-	  return K_OK;
+	  ktr_robot_set_pos(r, r->street + 1, r->avenue);
+	  return KTR_OK;
 	}
       break;
 
-    case K_EAST:
-      if (k_world_check_ns_wall(r->world, r->street, r->avenue))
+    case KTR_EAST:
+      if (ktr_world_check_ns_wall(r->world, r->street, r->avenue))
 	{
 	  fprintf(stderr, "Karel hit a wall to the east!\n");
-	  return K_ERROR;
+	  return KTR_ERROR;
 	}
       else
 	{
-	  k_robot_set_pos(r, r->street, r->avenue + 1);
-	  return K_OK;
+	  ktr_robot_set_pos(r, r->street, r->avenue + 1);
+	  return KTR_OK;
 	}
-      return K_ERROR;
+      return KTR_ERROR;
       break;
 
-    case K_SOUTH:
+    case KTR_SOUTH:
       if (r->street == 1)
 	{
 	  fprintf(stderr, "Karel hit a wall at the south edge!\n");
-	  return K_ERROR;
+	  return KTR_ERROR;
 	}
-      else if (k_world_check_ew_wall(r->world, r->street - 1, r->avenue))
+      else if (ktr_world_check_ew_wall(r->world, r->street - 1, r->avenue))
 	{
 	  fprintf(stderr, "Karel hit a wall to the south!\n");
-	  return K_ERROR;
+	  return KTR_ERROR;
 	}
       else
 	{
-	  k_robot_set_pos(r, r->street - 1, r->avenue);
-	  return K_OK;
+	  ktr_robot_set_pos(r, r->street - 1, r->avenue);
+	  return KTR_OK;
 	}
       break;
 
-    case K_WEST:
+    case KTR_WEST:
       if (r->avenue == 1)
 	{
 	  fprintf(stderr, "Karel hit a wall at the west edge!\n");
-	  return K_ERROR;
+	  return KTR_ERROR;
 	}
-      if (k_world_check_ns_wall(r->world, r->street, r->avenue - 1))
+      if (ktr_world_check_ns_wall(r->world, r->street, r->avenue - 1))
 	{
 	  fprintf(stderr, "Karel hit a wall to the west!\n");
-	  return K_ERROR;
+	  return KTR_ERROR;
 	}
       else
 	{
-	  k_robot_set_pos(r, r->street, r->avenue - 1);
-	  return K_OK;
+	  ktr_robot_set_pos(r, r->street, r->avenue - 1);
+	  return KTR_OK;
 	}
       break;
 
     default:
-      fprintf(stderr, "Unknown direction in k_robot_move\n");
-      return K_ERROR;
+      fprintf(stderr, "Unknown direction in ktr_robot_move\n");
+      return KTR_ERROR;
       break;
     }
 }
 
 int
-k_robot_pickbeeper(k_robot_t *r)
+ktr_robot_pickbeeper(ktr_robot_t *r)
 {
-  if (k_world_pick_beeper(r->world, r->street, r->avenue) != -1)
+  if (ktr_world_pick_beeper(r->world, r->street, r->avenue) != -1)
     {
       r->n_beepers += 1;
-      return K_OK;
+      return KTR_OK;
     }
   else
     {
       fprintf(stderr, "No beeper to pick up!\n");
-      return K_ERROR;
+      return KTR_ERROR;
     }
 }
 
 int
-k_robot_putbeeper(k_robot_t *r)
+ktr_robot_putbeeper(ktr_robot_t *r)
 {
   if (r->n_beepers > 0)
     {
-      k_world_put_beeper(r->world, r->street, r->avenue);
+      ktr_world_put_beeper(r->world, r->street, r->avenue);
       r->n_beepers -= 1;
-      return K_OK;
+      return KTR_OK;
     }
   else
     {
       fprintf(stderr, "No beeper to put down!\n");
-      return K_ERROR;
+      return KTR_ERROR;
     }
 }
 
 int
-k_robot_turnleft(k_robot_t *r)
+ktr_robot_turnleft(ktr_robot_t *r)
 {
   switch (r->dir)
     {
-    case K_NORTH:
-      k_robot_set_dir(r, K_WEST);
-      return K_OK;
+    case KTR_NORTH:
+      ktr_robot_set_dir(r, KTR_WEST);
+      return KTR_OK;
 
-    case K_EAST:
-      k_robot_set_dir(r, K_NORTH);
-      return K_OK;
+    case KTR_EAST:
+      ktr_robot_set_dir(r, KTR_NORTH);
+      return KTR_OK;
 
-    case K_SOUTH:
-      k_robot_set_dir(r, K_EAST);
-      return K_OK;
+    case KTR_SOUTH:
+      ktr_robot_set_dir(r, KTR_EAST);
+      return KTR_OK;
 
-    case K_WEST:
-      k_robot_set_dir(r, K_SOUTH);
-      return K_OK;
+    case KTR_WEST:
+      ktr_robot_set_dir(r, KTR_SOUTH);
+      return KTR_OK;
 
     default:
-      return K_ERROR;
+      return KTR_ERROR;
     }
 }
 
 int
-k_robot_turnoff(k_robot_t *r)
+ktr_robot_turnoff(ktr_robot_t *r)
 {
   r = r;			/* Keep gcc happy */
-  return K_OK;
+  return KTR_OK;
 }
 
 /*----------------------------------------------------------------------*
  *		       Public Utility Functions                         *
  *----------------------------------------------------------------------*/
 char *
-k_robot_dir_to_string(k_direction_t dir)
+ktr_robot_dir_to_string(ktr_direction_t dir)
 {
   switch (dir)
     {
-    case K_NORTH:
+    case KTR_NORTH:
       return "North";
 
-    case K_EAST:
+    case KTR_EAST:
       return "East";
 
-    case K_SOUTH:
+    case KTR_SOUTH:
       return "South";
 
-    case K_WEST:
+    case KTR_WEST:
       return "West";
 
     default:

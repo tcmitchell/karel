@@ -25,7 +25,7 @@ Symbol	*sp;
 
 
 prog		: BEGPROG deflist begexec stmtlist ENDEXEC ENDPROG {
-			startaddr = $3;
+			ktr_startaddr = $3;
 			code(RETURN);
 		  }
 		| prog error

@@ -43,29 +43,29 @@ ktr_keyword_t keywords[] = {
 /* built-in procedures and tests */
 
 ktr_builtin_t bltins[] = {
-  { "any-beepers-in-beeper-bag", k_robot_any_beepers_in_beeper_bag, TEST },
-  { "facing-east", k_robot_facing_east, TEST },
-  { "facing-north", k_robot_facing_north, TEST },
-  { "facing-south", k_robot_facing_south, TEST },
-  { "facing-west", k_robot_facing_west, TEST },
-  { "front-is-blocked", k_robot_front_is_blocked, TEST },
-  { "front-is-clear", k_robot_front_is_clear, TEST },
-  { "left-is-blocked", k_robot_left_is_blocked, TEST },
-  { "left-is-clear", k_robot_left_is_clear, TEST },
-  { "move", k_robot_move, BLTIN },
-  { "next-to-a-beeper", k_robot_next_to_a_beeper, TEST },
-  { "no-beepers-in-beeper-bag", k_robot_no_beepers_in_beeper_bag, TEST },
-  { "not-facing-east", k_robot_not_facing_west, TEST },
-  { "not-facing-north", k_robot_not_facing_north, TEST },
-  { "not-facing-south", k_robot_not_facing_south, TEST },
-  { "not-facing-west", k_robot_not_facing_west, TEST },
-  { "not-next-to-a-beeper", k_robot_not_next_to_a_beeper, TEST },
-  { "pickbeeper", k_robot_pickbeeper, BLTIN },
-  { "putbeeper", k_robot_putbeeper, BLTIN },
-  { "right-is-blocked", k_robot_right_is_blocked, TEST },
-  { "right-is-clear", k_robot_right_is_clear, TEST },
-  { "turnleft", k_robot_turnleft, BLTIN },
-  { "turnoff", k_vm_turnoff, BLTIN },
+  { "any-beepers-in-beeper-bag", ktr_robot_any_beepers_in_beeper_bag, TEST },
+  { "facing-east", ktr_robot_facing_east, TEST },
+  { "facing-north", ktr_robot_facing_north, TEST },
+  { "facing-south", ktr_robot_facing_south, TEST },
+  { "facing-west", ktr_robot_facing_west, TEST },
+  { "front-is-blocked", ktr_robot_front_is_blocked, TEST },
+  { "front-is-clear", ktr_robot_front_is_clear, TEST },
+  { "left-is-blocked", ktr_robot_left_is_blocked, TEST },
+  { "left-is-clear", ktr_robot_left_is_clear, TEST },
+  { "move", ktr_robot_move, BLTIN },
+  { "next-to-a-beeper", ktr_robot_next_to_a_beeper, TEST },
+  { "no-beepers-in-beeper-bag", ktr_robot_no_beepers_in_beeper_bag, TEST },
+  { "not-facing-east", ktr_robot_not_facing_west, TEST },
+  { "not-facing-north", ktr_robot_not_facing_north, TEST },
+  { "not-facing-south", ktr_robot_not_facing_south, TEST },
+  { "not-facing-west", ktr_robot_not_facing_west, TEST },
+  { "not-next-to-a-beeper", ktr_robot_not_next_to_a_beeper, TEST },
+  { "pickbeeper", ktr_robot_pickbeeper, BLTIN },
+  { "putbeeper", ktr_robot_putbeeper, BLTIN },
+  { "right-is-blocked", ktr_robot_right_is_blocked, TEST },
+  { "right-is-clear", ktr_robot_right_is_clear, TEST },
+  { "turnleft", ktr_robot_turnleft, BLTIN },
+  { "turnoff", ktr_vm_turnoff, BLTIN },
   { 0, 0, 0 }
 };
 
@@ -98,7 +98,7 @@ skipwhite(FILE *fp)		/* skip over white space (tabs, etc.) */
 }
 
 void
-initlex(FILE *in_file)			/* prepare the lexical analyzer */
+ktr_initlex(FILE *in_file)			/* prepare the lexical analyzer */
 {
   /* count the number of keywords */
   for (nkeys = 0; keywords[nkeys].name; nkeys++)

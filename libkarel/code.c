@@ -14,7 +14,7 @@ static int vm_state = 1;
 Inst	prog[NPROG];				/* the machine		*/
 int	progp;					/* next spot for code	*/
 int	pc;					/* program counter	*/
-int	startaddr;				/* start of main block	*/
+int	ktr_startaddr;				/* start of main block	*/
 int	flag;					/* flag for logic tests	*/
 int	dest;					/* branch destination	*/
 
@@ -57,7 +57,7 @@ codeint(int n)			/* install an int as next instruction */
 }
 
 int
-execute(k_robot_t *r, int n)		/* execute machine */
+ktr_execute(ktr_robot_t *r, int n)		/* execute machine */
 {
   int temp;
 
@@ -70,7 +70,7 @@ execute(k_robot_t *r, int n)		/* execute machine */
 }
 
 int
-branch(k_robot_t *r)			/* jump to another instruction */
+branch(ktr_robot_t *r)			/* jump to another instruction */
 {
   r = r;			/* Keep gcc happy */
 
@@ -80,7 +80,7 @@ branch(k_robot_t *r)			/* jump to another instruction */
 }
 
 int
-condbranch(k_robot_t *r)	/* jump of last logic test was false */
+condbranch(ktr_robot_t *r)	/* jump of last logic test was false */
 {
   r = r;			/* Keep gcc happy */
 
@@ -93,27 +93,27 @@ condbranch(k_robot_t *r)	/* jump of last logic test was false */
 }
 
 int
-call(k_robot_t *r)			/* call a user-defined instruction */
+call(ktr_robot_t *r)			/* call a user-defined instruction */
 {
-  return execute(r, (int) nextinst);
+  return ktr_execute(r, (int) nextinst);
 }
 
 int
-loopexec(k_robot_t *r)		/* execute block of code a number of times */
+loopexec(ktr_robot_t *r)		/* execute block of code a number of times */
 {
   int k, limit, loopbody;
 
   limit = (int) nextinst;
   loopbody = pc + 2;
   for (k = 0; k < limit; k++)
-    execute(r, loopbody);
+    ktr_execute(r, loopbody);
 
   branch(r);
   return 0;
 }
 
 int
-k_vm_turnoff(k_robot_t *r)
+ktr_vm_turnoff(ktr_robot_t *r)
 {
   r = r;
   vm_state = 0;

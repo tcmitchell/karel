@@ -32,10 +32,10 @@ typedef enum {
 
 static int robot_st = 3;
 static int robot_ave = 4;
-static k_direction_t robot_dir = K_NORTH;
+static ktr_direction_t robot_dir = KTR_NORTH;
 static int milli_sleep_time = 500;
-static k_world_t *the_world;
-static k_robot_t *the_robot;
+static ktr_world_t *the_world;
+static ktr_robot_t *the_robot;
 
 static gint win_height = 0;
 
@@ -56,7 +56,7 @@ static gint cell_height = 10;
 static gint half_cell_height = 5;
 
 static void
-k_sleep(int millis)
+ktr_sleep(int millis)
 {
   poll(NULL, 0, millis);
 }
@@ -78,7 +78,7 @@ gint_min(gint a, gint b)
 }
 
 static void
-k_draw_char(GdkDrawable *drawable, GdkGC *gc,
+ktr_draw_char(GdkDrawable *drawable, GdkGC *gc,
 	    gint street, gint avenue, gchar glyph)
 {
   gint txt_width, txt_height;
@@ -104,23 +104,23 @@ k_draw_char(GdkDrawable *drawable, GdkGC *gc,
 }
 
 static void
-k_drawrobot(GdkDrawable *drawable, GdkGC *gc,
-	    gint street, gint avenue, k_direction_t direction)
+ktr_drawrobot(GdkDrawable *drawable, GdkGC *gc,
+	    gint street, gint avenue, ktr_direction_t direction)
 {
   char robot = '?';
 
   switch (direction)
     {
-    case K_NORTH:
+    case KTR_NORTH:
       robot = '^';
       break;
-    case K_EAST:
+    case KTR_EAST:
       robot = '>';
       break;
-    case K_SOUTH:
+    case KTR_SOUTH:
       robot = 'v';
       break;
-    case K_WEST:
+    case KTR_WEST:
       robot = '<';
       break;
     default:
@@ -128,7 +128,7 @@ k_drawrobot(GdkDrawable *drawable, GdkGC *gc,
       break;
     }
       
-  k_draw_char(drawable, gc, street, avenue, robot);
+  ktr_draw_char(drawable, gc, street, avenue, robot);
 }
 
 static void
@@ -144,32 +144,32 @@ erase_robot ()
 }
 
 static void
-handle_robot_move_event(k_robot_move_event_t *ev)
+handle_robot_move_event(ktr_robot_move_event_t *ev)
 {
   erase_robot();
   robot_ave = ev->new_avenue;
   robot_st = ev->new_street;
-  k_drawrobot(drawing_area->window, drawing_area->style->black_gc,
+  ktr_drawrobot(drawing_area->window, drawing_area->style->black_gc,
 	      robot_st, robot_ave, robot_dir);
   while (gtk_events_pending())
     gtk_main_iteration();
-  k_sleep(milli_sleep_time);
+  ktr_sleep(milli_sleep_time);
 }
 
 static void
-handle_robot_turn_event(k_robot_turn_event_t *ev)
+handle_robot_turn_event(ktr_robot_turn_event_t *ev)
 {
   erase_robot();
   robot_dir = ev->new_direction;
-  k_drawrobot(drawing_area->window, drawing_area->style->black_gc,
+  ktr_drawrobot(drawing_area->window, drawing_area->style->black_gc,
 	      robot_st, robot_ave, robot_dir);
   while (gtk_events_pending())
     gtk_main_iteration();
-  k_sleep(milli_sleep_time);
+  ktr_sleep(milli_sleep_time);
 }
 
 static void
-draw_world(k_world_t *w, GdkDrawable *drawable)
+draw_world(ktr_world_t *w, GdkDrawable *drawable)
 {
   GdkGC *my_gc;
   int s, a;
@@ -205,7 +205,7 @@ draw_world(k_world_t *w, GdkDrawable *drawable)
   for (s=1; s<=w->n_streets; s++)
     for (a=1; a<=w->n_avenues; a++)
       {
-	if (k_world_check_ew_wall(w, s, a))
+	if (ktr_world_check_ew_wall(w, s, a))
 	  {
 	    w2s(s, a, &x1, &y1);
 	    y1 -= half_cell_height;
@@ -213,7 +213,7 @@ draw_world(k_world_t *w, GdkDrawable *drawable)
 			  x1 - half_cell_width, y1,
 			  x1 + half_cell_width, y1);
 	  }
-	if (k_world_check_ns_wall(w, s, a))
+	if (ktr_world_check_ns_wall(w, s, a))
 	  {
 	    w2s(s, a, &x1, &y1);
 	    x1 += half_cell_height;
@@ -223,8 +223,8 @@ draw_world(k_world_t *w, GdkDrawable *drawable)
 	  }
 
 	/* draw any beepers at this intersection */
-	if (k_world_check_beeper(w, s, a))
-	  k_draw_char(drawable, my_gc, s, a, '@');
+	if (ktr_world_check_beeper(w, s, a))
+	  ktr_draw_char(drawable, my_gc, s, a, '@');
       }
 
   gdk_gc_set_line_attributes (my_gc,
@@ -255,7 +255,7 @@ draw_world(k_world_t *w, GdkDrawable *drawable)
 }
 
 static void
-k_drawcell(GdkDrawable *drawable, GdkGC *gc,
+ktr_drawcell(GdkDrawable *drawable, GdkGC *gc,
 	   gint cell_x, gint cell_y, gint cell_type)
 {
   gint screen_x, screen_y;
@@ -298,7 +298,7 @@ k_drawcell(GdkDrawable *drawable, GdkGC *gc,
 
 /* Create a new backing pixmap of the appropriate size */
 static gint
-k_configure(GtkWidget *widget, GdkEventConfigure *event)
+ktr_configure(GtkWidget *widget, GdkEventConfigure *event)
 {
   event = event;		/* Keep gcc happy */
 
@@ -406,7 +406,7 @@ quit ()
 static void
 gtk_karel_execute ()
 {
-  execute(the_robot, startaddr);
+  ktr_execute(the_robot, ktr_startaddr);
 }
 
 int
@@ -433,14 +433,14 @@ main (int argc, char *argv[])
       exit(1);
     }
 
-  initlex(fp);
+  ktr_initlex(fp);
   yyparse();
 
-  the_world = k_world_create(5, 5);
-  k_world_put_beeper(the_world, 3, 3);
-  the_robot = k_robot_create(the_world, robot_st, robot_ave, robot_dir, 0);
-  k_robot_set_move_callback(the_robot, handle_robot_move_event);
-  k_robot_set_turn_callback(the_robot, handle_robot_turn_event);
+  the_world = ktr_world_create(5, 5);
+  ktr_world_put_beeper(the_world, 3, 3);
+  the_robot = ktr_robot_create(the_world, robot_st, robot_ave, robot_dir, 0);
+  ktr_robot_set_move_callback(the_robot, handle_robot_move_event);
+  ktr_robot_set_turn_callback(the_robot, handle_robot_turn_event);
 
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_widget_set_name (window, "Test Input");
@@ -466,7 +466,7 @@ main (int argc, char *argv[])
 		      (GtkSignalFunc) expose_event, NULL);
 
   gtk_signal_connect (GTK_OBJECT(drawing_area),"configure_event",
-		      (GtkSignalFunc) k_configure, NULL);
+		      (GtkSignalFunc) ktr_configure, NULL);
 
   /* Event signals */
 

@@ -1,7 +1,7 @@
 #ifndef __karel_h
 #define __karel_h
 
-#include <stdio.h>		/* for FILE* in initlex */
+#include <stdio.h>		/* for FILE* in ktr_initlex */
 
 /*!
   @header Karel
@@ -13,76 +13,76 @@
  *----------------------------------------------------------------------*/
 
 /*!
-  @typedef k_direction_t
+  @typedef ktr_direction_t
   @discussion The direction the robot is pointing.
  */
 typedef enum {
-  K_NORTH = 247,
-  K_EAST,
-  K_SOUTH,
-  K_WEST
-} k_direction_t;
+  KTR_NORTH = 247,
+  KTR_EAST,
+  KTR_SOUTH,
+  KTR_WEST
+} ktr_direction_t;
 
 /*!
-  @typedef k_corner_t
+  @typedef ktr_corner_t
  */
-typedef struct corner {
+typedef struct {
   int n_beepers;
   int has_wall_north;
   int has_wall_east;
   int has_wall_south;
   int has_wall_west;
-} k_corner_t;
+} ktr_corner_t;
 
 /*!
-  @typedef k_world_t
+  @typedef ktr_world_t
  */
-typedef struct world {
+typedef struct {
   int n_streets;
   int n_avenues;
-  k_corner_t ***corners;
-} k_world_t;
+  ktr_corner_t ***corners;
+} ktr_world_t;
 
 /*!
-  @typedef k_robot_move_event_t
+  @typedef ktr_robot_move_event_t
  */
-typedef struct k_robot_move_event {
+typedef struct {
   int old_street;
   int old_avenue;
   int new_street;
   int new_avenue;
-} k_robot_move_event_t;
+} ktr_robot_move_event_t;
 
 /*!
-  @typedef k_robot_turn_event_t
+  @typedef ktr_robot_turn_event_t
  */
-typedef struct k_robot_turn_event {
-  k_direction_t old_direction;
-  k_direction_t new_direction;
-} k_robot_turn_event_t;
+typedef struct {
+  ktr_direction_t old_direction;
+  ktr_direction_t new_direction;
+} ktr_robot_turn_event_t;
 
 /*!
-  @typedef k_robot_move_callback_t
+  @typedef ktr_robot_move_callback_t
  */
-typedef	void (*k_robot_move_callback_t)(k_robot_move_event_t *);
+typedef	void (*ktr_robot_move_callback_t)(ktr_robot_move_event_t *);
 
 /*!
-  @typedef k_robot_turn_callback_t
+  @typedef ktr_robot_turn_callback_t
 */
-typedef	void (*k_robot_turn_callback_t)(k_robot_turn_event_t *);
+typedef	void (*ktr_robot_turn_callback_t)(ktr_robot_turn_event_t *);
 
 /*!
-  @typedef k_robot_t
+  @typedef ktr_robot_t
  */
-typedef struct k_robot {
+typedef struct ktr_robot {
   int street;
   int avenue;
   int n_beepers;
-  k_direction_t dir;
-  k_world_t *world;
-  k_robot_move_callback_t move_cb;
-  k_robot_turn_callback_t turn_cb;
-} k_robot_t;
+  ktr_direction_t dir;
+  ktr_world_t *world;
+  ktr_robot_move_callback_t move_cb;
+  ktr_robot_turn_callback_t turn_cb;
+} ktr_robot_t;
 
 /*----------------------------------------------------------------------*
 			   Global Variables
@@ -90,74 +90,76 @@ typedef struct k_robot {
 
 /* We need to lose this from the public API! --tcm 27-Apr-2000 */
 
-extern int startaddr;
+extern int ktr_startaddr;
 
 /*----------------------------------------------------------------------*
 		Functions to manipulate Karel's World
  *----------------------------------------------------------------------*/
-k_world_t *
-k_world_create(int n_streets, int n_avenues);
+ktr_world_t *
+ktr_world_create(int n_streets, int n_avenues);
 
 void
-k_world_add_ew_wall(k_world_t *w,
+ktr_world_add_ew_wall(ktr_world_t *w,
 		    int north_of_street,
 		    int at_avenue,
 		    int length_to_east);
 
 void
-k_world_add_ns_wall(k_world_t *w,
+ktr_world_add_ns_wall(ktr_world_t *w,
 		    int at_street,
 		    int east_of_avenue,
 		    int length_to_north);
 
 int
-k_world_check_ew_wall(k_world_t *w, int north_of_street, int at_avenue);
+ktr_world_check_ew_wall(ktr_world_t *w, int north_of_street, int at_avenue);
 
 int
-k_world_check_ns_wall(k_world_t *w, int at_street, int east_of_avenue);
+ktr_world_check_ns_wall(ktr_world_t *w, int at_street, int east_of_avenue);
 
 int
-k_world_check_beeper(k_world_t *w, int street, int avenue);
+ktr_world_check_beeper(ktr_world_t *w, int street, int avenue);
 
 int
-k_world_pick_beeper(k_world_t *w, int street, int avenue);
+ktr_world_pick_beeper(ktr_world_t *w, int street, int avenue);
 
 int
-k_world_put_beeper(k_world_t *w, int street, int avenue);
+ktr_world_put_beeper(ktr_world_t *w, int street, int avenue);
 
 /*
  * Creates a new robot at the given position and orientation in the
  * given world.
  */
-k_robot_t *
-k_robot_create(k_world_t *world,
+ktr_robot_t *
+ktr_robot_create(ktr_world_t *world,
 	       int street, int avenue,
-	       k_direction_t dir, int n_beepers);
+	       ktr_direction_t dir, int n_beepers);
 
 void
-k_robot_set_move_callback(k_robot_t *r, k_robot_move_callback_t cb);
+ktr_robot_set_move_callback(ktr_robot_t *r, ktr_robot_move_callback_t cb);
 
 void
-k_robot_set_turn_callback(k_robot_t *r, k_robot_turn_callback_t cb);
+ktr_robot_set_turn_callback(ktr_robot_t *r, ktr_robot_turn_callback_t cb);
 
 /*!
-  @function k_robot_get_pos
+  @function ktr_robot_get_pos
  */
-void k_robot_get_pos(k_robot_t *r, int *street, int *avenue);
+void ktr_robot_get_pos(ktr_robot_t *r, int *street, int *avenue);
 
-char *k_robot_dir_to_string(k_direction_t dir);
+char *ktr_robot_dir_to_string(ktr_direction_t dir);
 
 /*!
-  @function execute
+  @function ktr_execute
   @discussion Execute the Karel machine.
   @param r A robot.
-  @param n the instruction to start from (usually 'startaddr').
+  @param n the instruction to start from (usually 'ktr_startaddr').
 */
-int execute(k_robot_t *r, int n);
+int ktr_execute(ktr_robot_t *r, int n);
 
-extern int yylex(void);			/* lexical analyzer */
-
-void initlex(FILE *in_file);		/* prepare the lexical analyzer */
+/*!
+  @function ktr_initlex
+  @discussion prepare the lexical analyzer
+ */
+void ktr_initlex(FILE *in_file);
 
 
 #endif /*__karel_h */
