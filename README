@@ -1,39 +1,16 @@
-This is version 1.0 of an interpreter for Karel's programming language as
-described in "Karel the Robot" by Richard E. Pattis (John Wiley & Sons, 1981).
-The language is described as a "gentle introduction to Pascal"; while very
-simple, it teaches the basics of structured programming.
-N.B.  This is *not* the interpreter that Pattis wrote (the one described in the
-book), which is copyright.  This version was written independently; approval
-was obtained from him for this posting.  Right is hereby given for unlimited
-non-profit use of this particular package.
 
-The structure of this interpreter is based heavily on that of hoc(1), described
-in "The Unix Programming Environment" by Brian Kernighan and Rob Pike; anyone
-interested in the "guts" of this program should be familiar with that program.
+This is Karel, an robot interpreter.  It is based on the book "Karel
+the Robot", by Richard E. Pattis.
 
-******************************************************************************
+See the INSTALL file for instructions on building and installing this
+program.
 
-File		Contents
+Building this software will yield the following files and executables:
 
-code.c		program executor and run-time routines
-doc		short BNF-like language description
-help.h		help-screen information
-karel.1		manual page
-karel.h		global declarations
-karel.y		syntactical language definition
-klex.c		lexical analyzer
-main.c		startup routines, error handlers, etc.
-scr.c		screen routines
-symbol.c	symbol-table manipulator
-words.h		Karel keywords and built-in procedures
-
-******************************************************************************
+  karelg       A GTK based Karel interpreter GUI
+  karelc       A curses based Karel interpreter GUI
+  libkarel.a   The karel interpreter/machine core
+  karel.h      Header file for libkarel.a for building your own GUIs
 
 
-					Jan Miksovsky
-					Choate Rosemary Hall
-					P.O. Box 788
-					Wallingford, CT  06492
-
-					...{decvax}!yale!spock!jtm
 

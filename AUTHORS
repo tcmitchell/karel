@@ -1,0 +1,11 @@
+
+Richard E. Pattis wrote the book "Karel the Robot", (John Wiley &
+Sons, 1981) which describes Karel and his world.  This work is based
+on that book.
+
+Jan Miksovsky is the original author of this code, circa 1985.
+
+Tom Mitchell <tmitchel@users.sourceforge.net> modified that code in
+the Spring of 2000 to be more modular, and to split the core engine
+out from the curses user interface.  This allowed the GTK interface to
+be added.
