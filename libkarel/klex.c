@@ -74,6 +74,18 @@ yylex()				/* lexical analyzer */
 getkeyid(s)	/* find s in keyword array; return -1 if not found */
 char	*s;
 {
+  int i = 0;
+  for (i=0; i<nkeys; i++) {
+    if (strcmp(s, keywords[i].name) == 0) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+getkeyid_orig(s)	/* find s in keyword array; return -1 if not found */
+char	*s;
+{
 	int	cmp, lower, upper, guess, found;
 
 	/* use a binary search */
@@ -96,7 +108,19 @@ char	*s;
 /* arrays to the same search routine					*/
 
 
-getbltinid(s)		/* find s in built-in array; return -1 if not found */
+getbltinid(s)	/* find s in keyword array; return -1 if not found */
+char	*s;
+{
+  int i = 0;
+  for (i=0; i<nbltins; i++) {
+    if (strcmp(s, bltins[i].name) == 0) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+getbltinid_orig(s)		/* find s in built-in array; return -1 if not found */
 char	*s;
 {
 	int	cmp, lower, upper, guess, found;
