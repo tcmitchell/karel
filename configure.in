@@ -1,11 +1,28 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(INSTALL)
-AM_INIT_AUTOMAKE(karel, 0.1)
+AM_INIT_AUTOMAKE(Karel, 0.1)
 
 dnl Checks for programs.
 AC_PROG_CC
 AC_PROG_YACC
 AC_PROG_RANLIB
+
+dnl Check a --with-gtk flag to indicate no gtk is to be used.
+dnl This will aid in testing, as well as being the right thing.
+dnl
+dnl - AC_PATH_PROG(GTK_CONFIG, gtk-config, no)
+dnl - if test "$GTK_CONFIG" = "no" ; then
+dnl -   GTK_CFLAGS=''
+dnl -   GTK_LIBS=''
+dnl -   HAVE_GTK=0
+dnl - else
+dnl -   GTK_CFLAGS=`$GTK_CONFIG --cflags`
+dnl -   GTK_LIBS=`$GTK_CONFIG --libs`
+dnl -   HAVE_GTK=1
+dnl - fi
+dnl - AC_DEFINE_UNQUOTED(HAVE_GTK,$HAVE_GTK)
+dnl - AC_SUBST(GTK_CFLAGS)
+dnl - AC_SUBST(GTK_LIBS)
 
 dnl Checks for libraries.
 dnl Replace `main' with a function in -lcurses:
