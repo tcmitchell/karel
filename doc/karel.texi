@@ -1,7 +1,7 @@
 \input texinfo   @c -*-texinfo-*-
 
-@set UPDATED 27 June 2000
-@set EDITION 0.3.3
+@set UPDATED 30 June 2000
+@set EDITION 0.3.4
 @set VERSION 0.3
 
 @c %**start of header
@@ -96,7 +96,6 @@ of the @cite{Karel Manual} for karel Version @value{VERSION}
 @menu
 * Learning to Program::         
 * Karel::                       
-* Things to do::                
 * How to use this manual::      
 * Acknowledgements::            
 @end menu
@@ -114,14 +113,14 @@ useful introduction to computer programming.  And I think that children
 are entertained by the idea of instructing a robot to perform a task,
 and then watching the robot actually follow the instructions.
 
-@node Karel, Things to do, Learning to Program, Introduction
+@node Karel, How to use this manual, Learning to Program, Introduction
 @section Karel
 
 This document is light on the details of the Karel language.  The
 definitive reference is Richard Pattis' @cite{Karel The Robot: A Gentle
 Introduction to The Art of Programming}@footnote{Pattis, Richard E., Jim
 Roberts, and Mark Stehlik. @cite{Karel the Robot: A Gentle Introduction
-to The Art of Programming}. City, State: John Wiley & Sons, 1994.  ISBN:
+to The Art of Programming}. New York: Wiley, 1995.  ISBN:
 0471597252}.  What this document attempts to describe is the Karel
 simulator, which loads and executes Karel programs.
 
@@ -143,18 +142,7 @@ build user interfaces to the Karel environment in Qt, Motif/Lesstif,
 Athena, Tcl/Tk, Java, perl, guile, or any other system that has a C
 callout mechanism.
 
-@node Things to do, How to use this manual, Karel, Introduction
-@section Things to do
-
-@enumerate
-@item
-Save and load world description files
-
-@item
-Debugger/code stepper
-@end enumerate
-
-@node How to use this manual, Acknowledgements, Things to do, Introduction
+@node How to use this manual, Acknowledgements, Karel, Introduction
 @section How to use this manual
 
 This manual is divided into 2 sections, a User's Guide and a
@@ -169,21 +157,28 @@ environment, you will find the Programmer's Guide helpful.
 @cindex Miksovsky, Jan
 @cindex Pattis, Richard
 
-Thanks to Richard Pattis and Jan Miksovsky.
+Thanks go to Richard Pattis wrote @cite{Karel the Robot}, upon which
+this program is based.  Richard was kind to give me his permission to
+distribute this simulator.  Without his book, this program could never
+have been written.
 
-Richard Pattis wrote @cite{Karel the Robot}, upon which this program is
-based.  Richard was kind to give me his permission to distribute this
-simulator.
+Thanks also go to Jan Miksovsky, who wrote a Karel simulator in the mid
+1980's.  I found that program in early 2000, dusted it off, and it ran.
+I then modified the program to be more modular, and object-oriented (as
+much as one can in C).  I was able to locate Jan on the internet (it
+pays to have a unique last name, I guess) and he was gracious enough to
+give me his permission to modify his original work and distribute it.
+Not much remains of Jan's code, but the concepts behind the simulator,
+and particularly the engine that builds and executes a Karel program,
+are Jan's, and I probably couldn't have written this system without his
+lead to follow.
 
-Jan Miksovsky wrote a Karel simulator in the mid 1980's.  I found that
-program in early 2000, dusted it off, and it ran.  I then modified the
-program to be more modular, and object-oriented (as much as one can in
-C).  I was able to locate Jan on the internet (it pays to have a unique
-last name I guess) and he was gracious enough to give me his permission
-to modify his original work and distribute it.  Not much remains of
-Jan's code, but the concepts behind the simulator, and particularly the
-engine that builds and executes a Karel program, are Jan's, and I
-probably couldn't have written this system without his lead to follow.
+Don Dietrick and Bill Mackiewicz both served as early beta testers.  I
+am indebted to them for their patience in dealing with a half-baked glob
+of software, and sparse documentation.  They dutifully did the
+compile-make-repeat loop in order to test out the latest I had to offer.
+
+
 
 @c ----------------------------------------------------------------------
 @c
@@ -196,11 +191,12 @@ probably couldn't have written this system without his lead to follow.
 
 @menu
 * Invoking::                    
+* Defining a world::            
 * Writing Karel Programs::      
 * Karel Language Reference::    
 @end menu
 
-@node Invoking, Writing Karel Programs, Karel Users Guide, Karel Users Guide
+@node Invoking, Defining a world, Karel Users Guide, Karel Users Guide
 @section Invoking the Karel Simulator
 
 @menu
@@ -215,18 +211,13 @@ responsible for displaying the state of the world and the robot to the
 user.  The karel distribution comes with two such simulators: a terminal
 based interface and an X Window System based interface.
 
-The current version of the karel software is not able to load a world
-from a file.  The world is currently defined programmatically within the
-simulator programs.  In a future release (real soon now), the core karel
-library will have the ability to read and write world files.
-
 @node Curses Interface, X Interface, Invoking, Invoking
 @subsection Invoking in a terminal
 
 @code{karelc} is a simulator written with the curses user interface.  To
 run the samples/maze.k Karel program in the @code{karelc} simulator:
 
-@code{karelc samples/maze.k}
+@code{curses/karelc -p samples/maze.k -w samples/maze1.wld}
 
 @node X Interface,  , Curses Interface, Invoking
 @subsection Invoking under X Windows
@@ -235,7 +226,7 @@ run the samples/maze.k Karel program in the @code{karelc} simulator:
 interface.  To run the samples/maze.k Karel program in the @code{karelg}
 simulator:
 
-@code{karelg samples/maze.k}
+@code{gtk/karelg -p samples/maze.k -w samples/maze1.wld}
 
 The X Window System front end is based on the Gimp ToolKit.  The choice
 of X toolkits is largely personal preference.  GTK was chosen because of
@@ -244,7 +235,131 @@ engine, is independent of any user interface.  It should be easy to
 create a new user interface for Karel with a different X toolkit.  This
 was one of the goals for the Karel Architecture.
 
-@node Writing Karel Programs, Karel Language Reference, Invoking, Karel Users Guide
+@node Defining a world, Writing Karel Programs, Invoking, Karel Users Guide
+@section Defining Karel's World
+
+@menu
+* World overview::              
+* World general rules::         
+* World reference::             
+* World example::               
+@end menu
+
+@node World overview, World general rules, Defining a world, Defining a world
+@subsection Overview
+Karel's world has intersections, walls, and beepers.  The programs the
+Karel executes are independent of the world he moves around in.  You can
+execute the same program in multiple worlds, or multiple programs in the
+same world.
+
+Karel's world is defined in a file which is loaded by a Karel
+simulator.  The world file is a simple text file containing commands
+that define the size of the world, the position of walls and beepers,
+and Karel's starting position.
+
+@node World general rules, World reference, World overview, Defining a world
+@subsection General Rules
+
+Each line in the file describes a part of Karel's world.  We'll look at
+each in turn, but first there are some general rules for the world
+file.
+
+@itemize @bullet
+@item The commands are not case sensitive.  WORLD, World, and world are
+equivalent.
+@item Karel's world is made up of Avenues and Streets.  These correspond
+to Cartesian X and Y coordinates respectively.  Avenues are vertical
+lines, increasing to the right.  Streets are horizontal lines increasing
+to the north.  In the world file, coordinates are always described as
+avenues then street just as in geometry, where coordinates are described
+as x, y.
+@item Directions are defined as follows:
+@itemize @minus
+@item North == 1
+@item East  == 2
+@item South == 3
+@item West  == 4
+@end itemize
+@end itemize
+
+
+@node World reference, World example, World general rules, Defining a world
+@subsection Reference
+
+@example
+World @var{num_streets} @var{num_avenues}
+World 5 5
+@end example
+The World command defines a world that is 5 avenues wide by 5 streets
+high.  
+
+@example
+Beepers @var{street} @var{avenue} @var{number}
+Beepers 3 3 1
+@end example
+The beeper command places a number of beepers on an intersection.  In
+this case, one beeper would be placed on the intersection @{3, 3@}
+
+@example
+Robot @var{street} @var{avenue} @var{direction} @var{num_beepers}
+Robot 4 3 1 0
+@end example
+The robot starting position is defined with the Robot command.  In this
+example, the robot starts at @{4, 3@}, facing North (1), with zero
+beepers in his beeper bag.
+
+@example
+Wall @var{street} @var{avenue} @var{direction}
+Wall 2 2 1
+@end example
+The Wall command places a wall section in Karel's world.  Each wall
+section is one block long.  Walls can either be north or west of an
+intersection (1 or 4 respectively).  In this example, a horizontal wall
+is placed directly north of the intersection @{2, 2@}.
+
+@node World example,  , World reference, Defining a world
+@subsection Example
+Here is a sample world file:
+
+@example
+@cartouche
+World 5 5
+Beepers 3 3 1
+Robot 4 3 1 0
+Wall 2 2 1
+Wall 3 2 1
+Wall 1 1 4
+Wall 2 1 4
+Wall 2 2 4
+Wall 3 1 4
+Wall 3 2 4
+Wall 3 3 4
+Wall 4 1 4
+Wall 4 2 4
+Wall 4 3 4
+Wall 4 4 4
+@end cartouche
+@end example
+
+The resulting world, in the curses interface, looks like this:
+
+@example
+@cartouche
+  - - - - -
+ |+ + + + +|
+
+ |+ + + +|+|
+
+ |+ + *|+|+|
+    - -
+ |+ +|+|+|+|
+
+ |+|+|+|+|+|
+ ----------
+@end cartouche
+@end example
+
+@node Writing Karel Programs, Karel Language Reference, Defining a world, Karel Users Guide
 @section Writing Karel Programs
 
 @menu
@@ -686,6 +801,13 @@ The world data type.
 Creates a new world of size @var{n_streets} by @var{n_avenues}.
 @end deftypefn
 
+@deftypefn World {ktr_world_t *} ktr_world_read (FILE *@var{in_file})
+Reads a world description from the open file @var{in_file}.  The file
+should be opened with a call to @code{fopen()}.  Returns a newly
+allocated world matching the description found in the file, or NULL if
+there is an error reading the file.
+@end deftypefn
+
 @deftypefn World void ktr_world_add_ew_wall (ktr_world_t *@var{w}, int @var{north_of_street}, int @var{at_avenue}, int @var{length_to_east})
 Adds an east-west wall immediately north of @var{north_of_street},
 starting at @var{at_avenue}, and extending @var{length_to_east} blocks
@@ -728,9 +850,9 @@ Increments the number of beepers at intersection
 @subsection Engine API
 
 @deftypefn Engine {ktr_engine_t *} ktr_load_program (FILE *@var{in_file});
-Loads the karel program in the open file @var{in_file}.  Returns the
-resulting engine.  Errors are presently undetected.  This obviously
-needs work!
+Loads the karel program in the open file @var{in_file}.  The file should
+be opened with a call to @code{fopen()}.  Returns the resulting engine.
+Errors are presently undetected.  This obviously needs work!
 @end deftypefn
 
 @c ----------------------------------------------------------------------
