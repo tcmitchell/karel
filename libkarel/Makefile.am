@@ -40,4 +40,5 @@ EXTRA_DIST = kparse.h
 
 AM_CFLAGS = -W -Wall
 
-MAINTAINERCLEANFILES = kparse.h kparse.c
+# Make builds these, so clean should delete them
+CLEANFILES = kparse.h kparse.c
