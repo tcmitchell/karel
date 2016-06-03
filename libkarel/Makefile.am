@@ -34,7 +34,7 @@ libkarel_a_SOURCES =	kparse.y \
 			world.c \
 			yyerror.c
 
-YFLAGS = -d
+AM_YFLAGS = -d
 
 EXTRA_DIST = kparse.h
 

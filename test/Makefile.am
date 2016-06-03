@@ -25,4 +25,4 @@ ktest_SOURCES = testmain.c
 
 ktest_LDADD = -L../libkarel -lkarel
 
-INCLUDES = -I$(srcdir)/../libkarel
+AM_CPPFLAGS = -I$(srcdir)/../libkarel
