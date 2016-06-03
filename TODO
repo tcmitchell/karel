@@ -1,3 +1,4 @@
+Update README documentation for karelc command line args
 more robust/flexible world parser/reader (it'll dump core now)
 error checking in ktr_load_program
 common command line args in karelc and karelg

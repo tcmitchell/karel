@@ -25,4 +25,4 @@ karelg_SOURCES = karel.c
 karelg_LDFLAGS = `$(GTK_CONFIG) --libs`
 karelg_LDADD = -L../libkarel -lkarel
 
-INCLUDES = `$(GTK_CONFIG) --cflags` -I$(srcdir)/../libkarel
+AM_CPPFLAGS = `$(GTK_CONFIG) --cflags` -I$(srcdir)/../libkarel

@@ -1,3 +1,8 @@
+2016-06-03  Tom Mitchell <tcmitchell@users.noreply.github.com>
+
+	* Update autotools/autmake files to current versions
+	* Remove generated files
+
 2000-12-30  Tom Mitchell  <tmitchel@wolfjaw.bbn.com>
 
 	* Released version 0.6
