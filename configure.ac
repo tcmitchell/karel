@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(INSTALL)
-AM_INIT_AUTOMAKE(karel, 0.6)
+AC_INIT([karel], [0.8])
+AM_INIT_AUTOMAKE
 
 dnl Checks for programs.
 AC_PROG_CC
