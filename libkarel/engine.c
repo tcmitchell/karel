@@ -27,6 +27,8 @@
 
 #if STDC_HEADERS
 # include "string.h"
+# include <stdlib.h>
+# include <stdint.h>
 #endif /* STDC_HEADERS */
 
 #include "karel.h"
@@ -58,7 +60,7 @@ ktr_load_program (FILE *in_file)
 {
   ktr_engine_t *engine;
 
-  in_file = in_file;
+  /* in_file = in_file; */
   engine = ktr_engine_create ();
 
   ktr_lex_init (in_file, engine);
@@ -119,7 +121,7 @@ ktr_engine_setcode (ktr_engine_t *engine, int addr, ktr_instruction_t n)
 void
 ktr_engine_setcodeint (ktr_engine_t *engine, int addr, int n)
 {
-  engine->prog[addr] = (ktr_instruction_t) n;
+  engine->prog[addr] = (ktr_instruction_t)(uintptr_t) n;
 }
 
 /*
@@ -143,7 +145,7 @@ ktr_engine_code (ktr_engine_t *engine, ktr_instruction_t n)
 void
 ktr_engine_codeint(ktr_engine_t *engine, int n)
 {
-  ktr_engine_code (engine, (ktr_instruction_t) n);
+  ktr_engine_code (engine, (ktr_instruction_t)(uintptr_t) n);
 }
 
 /*----------------------------------------------------------------------*
@@ -154,12 +156,11 @@ ktr_engine_codeint(ktr_engine_t *engine, int n)
   jump to another instruction
 */
 int
-ktr_engine_branch(ktr_engine_t *engine, ktr_robot_t *r)
+ktr_engine_branch(ktr_engine_t *engine, ktr_robot_t *UNUSED(r))
 {
   int dest;
 
-  r = r;			/* Keep gcc happy */
-  dest = (int) ktr_engine_nextinst(engine);
+  dest = (int)(uintptr_t)ktr_engine_nextinst(engine);
   engine->pc = dest - 1;
   return 0;
 }
@@ -170,8 +171,6 @@ ktr_engine_branch(ktr_engine_t *engine, ktr_robot_t *r)
 int
 ktr_engine_condbranch(ktr_engine_t *engine, ktr_robot_t *r)
 {
-  r = r;			/* Keep gcc happy */
-
   if (!engine->flag)
     ktr_engine_branch(engine, r);
   else
@@ -187,7 +186,7 @@ int
 ktr_engine_call(ktr_engine_t *engine, ktr_robot_t *r)
 {
   return ktr_engine_execute_internal(engine, r,
-				     (int) ktr_engine_nextinst(engine));
+				     (int)(uintptr_t)ktr_engine_nextinst(engine));
 }
 
 /*
@@ -198,7 +197,7 @@ ktr_engine_loopexec(ktr_engine_t *engine, ktr_robot_t *r)
 {
   int k, limit, loopbody;
 
-  limit = (int) ktr_engine_nextinst(engine);
+  limit = (int)(uintptr_t)ktr_engine_nextinst(engine);
   loopbody = engine->pc + 2;
   for (k = 0; k < limit; k++)
     ktr_engine_execute_internal (engine, r, loopbody);
@@ -208,9 +207,8 @@ ktr_engine_loopexec(ktr_engine_t *engine, ktr_robot_t *r)
 }
 
 int
-ktr_engine_turnoff(ktr_engine_t *engine, ktr_robot_t *r)
+ktr_engine_turnoff(ktr_engine_t *engine, ktr_robot_t *UNUSED(r))
 {
-  r = r;
   engine->state = KTR_ENGINE_DONE;
   return 0;
 }

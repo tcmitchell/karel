@@ -150,44 +150,38 @@ ktr_robot_get_pos(ktr_robot_t *r, int *street, int *avenue)
  *----------------------------------------------------------------------*/
 
 int
-ktr_robot_any_beepers_in_beeper_bag(ktr_engine_t *e, ktr_robot_t *r)
+ktr_robot_any_beepers_in_beeper_bag(ktr_engine_t *UNUSED(e), ktr_robot_t *r)
 {
-  e = e;			/* Keep gcc happy */
   return (r->n_beepers > 0);
 }
 
 int
-ktr_robot_facing_east(ktr_engine_t *e, ktr_robot_t *r)
+ktr_robot_facing_east(ktr_engine_t *UNUSED(e), ktr_robot_t *r)
 {
-  e = e;			/* Keep gcc happy */
   return (r->dir == KTR_EAST);
 }
 
 int
-ktr_robot_facing_north(ktr_engine_t *e, ktr_robot_t *r)
+ktr_robot_facing_north(ktr_engine_t *UNUSED(e), ktr_robot_t *r)
 {
-  e = e;			/* Keep gcc happy */
   return (r->dir == KTR_NORTH);
 }
 
 int
-ktr_robot_facing_south(ktr_engine_t *e, ktr_robot_t *r)
+ktr_robot_facing_south(ktr_engine_t *UNUSED(e), ktr_robot_t *r)
 {
-  e = e;			/* Keep gcc happy */
   return (r->dir == KTR_SOUTH);
 }
 
 int
-ktr_robot_facing_west(ktr_engine_t *e, ktr_robot_t *r)
+ktr_robot_facing_west(ktr_engine_t *UNUSED(e), ktr_robot_t *r)
 {
-  e = e;			/* Keep gcc happy */
   return (r->dir == KTR_WEST);
 }
 
 int
-ktr_robot_front_is_blocked(ktr_engine_t *e, ktr_robot_t *r)
+ktr_robot_front_is_blocked(ktr_engine_t *UNUSED(e), ktr_robot_t *r)
 {
-  e = e;			/* Keep gcc happy */
   return is_dir_blocked(r, r->dir);
 }
 
@@ -198,9 +192,8 @@ ktr_robot_front_is_clear(ktr_engine_t *e, ktr_robot_t *r)
 }
 
 int
-ktr_robot_left_is_blocked(ktr_engine_t *e, ktr_robot_t *r)
+ktr_robot_left_is_blocked(ktr_engine_t *UNUSED(e), ktr_robot_t *r)
 {
-  e = e;			/* Keep gcc happy */
   switch (r->dir)
     {
     case KTR_NORTH:
@@ -228,16 +221,14 @@ ktr_robot_left_is_clear(ktr_engine_t *e, ktr_robot_t *r)
 }
 
 int
-ktr_robot_next_to_a_beeper(ktr_engine_t *e, ktr_robot_t *r)
+ktr_robot_next_to_a_beeper(ktr_engine_t *UNUSED(e), ktr_robot_t *r)
 {
-  e = e;			/* Keep gcc happy */
   return ktr_world_check_beeper(r->world, r->street, r->avenue);
 }
 
 int
-ktr_robot_no_beepers_in_beeper_bag(ktr_engine_t *e, ktr_robot_t *r)
+ktr_robot_no_beepers_in_beeper_bag(ktr_engine_t *UNUSED(e), ktr_robot_t *r)
 {
-  e = e;			/* Keep gcc happy */
   return (r->n_beepers == 0);
 }
 
@@ -272,9 +263,8 @@ ktr_robot_not_next_to_a_beeper(ktr_engine_t *e, ktr_robot_t *r)
 }
 
 int
-ktr_robot_right_is_blocked(ktr_engine_t *e, ktr_robot_t *r)
+ktr_robot_right_is_blocked(ktr_engine_t *UNUSED(e), ktr_robot_t *r)
 {
-  e = e;			/* Keep gcc happy */
   switch (r->dir)
     {
     case KTR_NORTH:
@@ -311,9 +301,8 @@ ktr_robot_right_is_clear(ktr_engine_t *e, ktr_robot_t *r)
  * Need to check that the move forward does not
  * hit a wall, either artificial or a world boundary.
  */
-int ktr_robot_move(ktr_engine_t *e, ktr_robot_t *r)
+int ktr_robot_move(ktr_engine_t *UNUSED(e), ktr_robot_t *r)
 {
-  e = e;			/* Keep gcc happy */
   switch (r->dir)
     {
     case KTR_NORTH:
@@ -387,9 +376,8 @@ int ktr_robot_move(ktr_engine_t *e, ktr_robot_t *r)
 }
 
 int
-ktr_robot_pickbeeper(ktr_engine_t *e, ktr_robot_t *r)
+ktr_robot_pickbeeper(ktr_engine_t *UNUSED(e), ktr_robot_t *r)
 {
-  e = e;			/* Keep gcc happy */
   if (ktr_world_pick_beeper(r->world, r->street, r->avenue) != -1)
     {
       r->n_beepers += 1;
@@ -403,9 +391,8 @@ ktr_robot_pickbeeper(ktr_engine_t *e, ktr_robot_t *r)
 }
 
 int
-ktr_robot_putbeeper(ktr_engine_t *e, ktr_robot_t *r)
+ktr_robot_putbeeper(ktr_engine_t *UNUSED(e), ktr_robot_t *r)
 {
-  e = e;			/* Keep gcc happy */
   if (r->n_beepers > 0)
     {
       ktr_world_put_beeper(r->world, r->street, r->avenue);
@@ -420,9 +407,8 @@ ktr_robot_putbeeper(ktr_engine_t *e, ktr_robot_t *r)
 }
 
 int
-ktr_robot_turnleft(ktr_engine_t *e, ktr_robot_t *r)
+ktr_robot_turnleft(ktr_engine_t *UNUSED(e), ktr_robot_t *r)
 {
-  e = e;			/* Keep gcc happy */
   switch (r->dir)
     {
     case KTR_NORTH:

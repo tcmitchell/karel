@@ -23,36 +23,6 @@
 #include <unistd.h>
 #include "karel.h"
 
-int
-test_main(int argc, char **argv)
-{
-  ktr_world_t *world;
-  ktr_robot_t *robot;
-  
-  argc = argc;			/* Keep gcc happy */
-  argv = argv;			/* Keep gcc happy */
-
-  fprintf(stdout, "Starting Karel\n");
-  world = ktr_world_create(5, 5);
-  robot = ktr_robot_create(world, 4, 2, KTR_NORTH, 5);
-  ktr_robot_move(robot);
-  ktr_robot_turnleft(robot);
-  ktr_robot_turnleft(robot);
-  ktr_robot_turnleft(robot);
-  ktr_robot_pickbeeper(robot);
-  if (ktr_world_check_beeper(world, robot->street, robot->avenue))
-    printf("Beeper at %d, %d\n", robot->street, robot->avenue);
-  else
-    printf("No beeper at %d, %d\n", robot->street, robot->avenue);
-  ktr_robot_putbeeper(robot);
-  if (ktr_world_check_beeper(world, robot->street, robot->avenue))
-    printf("Beeper at %d, %d\n", robot->street, robot->avenue);
-  else
-    printf("No beeper at %d, %d\n", robot->street, robot->avenue);
-  ktr_robot_move(robot);
-  return 0;
-}
-
 void
 handle_robot_move_event(ktr_robot_move_event_t *ev)
 {
@@ -107,7 +77,7 @@ main(int argc, char **argv)
   robot = ktr_robot_create(world, 4, 2, KTR_NORTH, 5);
   ktr_robot_set_move_callback(robot, handle_robot_move_event);
   ktr_robot_set_turn_callback(robot, handle_robot_turn_event);
-  
+
   ktr_engine_execute(engine, robot);
 
   return 0;

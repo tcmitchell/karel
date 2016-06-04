@@ -22,6 +22,7 @@
 #include <stdio.h>
 #if STDC_HEADERS
 # include <stdarg.h>
+# include <stdlib.h>
 #endif /* STDC_HEADERS */
 
 /* Print an error message and exit reporting failure.

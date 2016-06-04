@@ -305,4 +305,11 @@ char *ktr_robot_dir_to_string(ktr_direction_t dir);
  */
 ktr_engine_t * ktr_load_program (FILE *in_file);
 
+/*
+ * start the engine running
+ */
+int
+ktr_engine_execute(ktr_engine_t *engine, ktr_robot_t *robot);
+
+
 #endif /*__karel_h */
