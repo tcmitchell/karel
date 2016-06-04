@@ -21,6 +21,7 @@
 
 #include <unistd.h>
 #include <curses.h>
+#include <stdlib.h>
 #include <sys/poll.h>
 #include "karel.h"
 
@@ -175,7 +176,7 @@ main(int argc, char **argv)
   robot = ktr_robot_create(world, robot_st, robot_ave, robot_dir, 0);
   ktr_robot_set_move_callback(robot, handle_robot_move_event);
   ktr_robot_set_turn_callback(robot, handle_robot_turn_event);
-  
+
   if (initscr() == NULL)
     {
       perror("initscr");

@@ -21,6 +21,8 @@
 
 #include	<stdio.h>
 #include	<ctype.h>
+#include        <stdlib.h>
+#include        <string.h>
 #include	"karel.h"
 #include	"karelP.h"
 #include	"kparse.h"

@@ -22,6 +22,12 @@
 #ifndef __karelP_h
 #define __karelP_h
 
+#ifdef __GNUC__
+#  define UNUSED(x) UNUSED_ ## x __attribute__((__unused__))
+#else
+#  define UNUSED(x) UNUSED_ ## x
+#endif
+
 /*----------------------------------------------------------------------*
 			    YACC functions
  *----------------------------------------------------------------------*/
@@ -197,6 +203,7 @@ void ktr_engine_code (ktr_engine_t *engine, ktr_instruction_t n);
   install an int as next instruction
 */
 void ktr_engine_codeint(ktr_engine_t *engine, int n);
+
 
 /*----------------------------------------------------------------------*
 		     Program flow implementation
